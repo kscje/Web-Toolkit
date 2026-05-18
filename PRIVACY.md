@@ -63,7 +63,7 @@ We may update this Privacy Policy from time to time. Any significant changes wil
 
 If you have any questions, suggestions, or complaints about this Privacy Policy, please contact us:
 
-- **Developer Email**: textflow@example.com
+- **Developer Email**: kscj.e@live.com
 - **Feedback**: Submit via the "Suggest a feature" entry at the bottom of the extension popup
 
 ### 9. Compliance Statement
@@ -138,7 +138,7 @@ TextFlow（文本工具箱）（以下简称"本扩展"或"我们"）高度重�
 
 如果您对本隐私政策有任何疑问、建议或投诉，请通过以下方式联系我们：
 
-- **开发者邮箱**：textflow@example.com
+- **开发者邮箱**：kscj.e@live.com
 - **问题反馈**：通过扩展弹窗底部的"想要新功能？"建议入口提交
 
 ### 9. 合规声明
