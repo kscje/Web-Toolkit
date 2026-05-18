@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="settings.full_settings_title">Full Setting - TextFlow</title>
+  <link rel="stylesheet" href="styles/options.css">
+</head>
+<body>
+  <div class="options-page">
+    <div class="options-header">
+      <div class="options-header-icon">🧰</div>
+      <div class="options-header-text">
+        <div class="options-title" data-i18n="app.title">文本工具箱</div>
+        <div class="options-subtitle" data-i18n="settings.full_settings_title">全部设置 - 文本工具箱</div>
+      </div>
+    </div>
+
+    <div class="options-content">
+      <div class="options-card">
+        <div class="options-card-title" data-i18n="settings.language_label">界面语言</div>
+        <div class="options-card-desc" data-i18n="settings.language_desc">选择插件的显示语言</div>
+        <div class="language-options">
+          <button class="lang-option active" data-lang="zh" id="optLangZh" data-i18n="settings.language_zh">中文</button>
+          <button class="lang-option" data-lang="en" id="optLangEn" data-i18n="settings.language_en">English</button>
+        </div>
+      </div>
+
+      <div class="options-card">
+        <div class="options-card-title" data-i18n="settings.feature_management">功能块管理</div>
+        <div class="options-card-desc" data-i18n="settings.feature_management_desc">启用/禁用各功能块并调整其显示顺序</div>
+
+        <div class="sort-hint" data-i18n="settings.drag_hint">拖拽 ≡ 图标调整顺序</div>
+        <div class="feature-list" id="featureList">
+        </div>
+      </div>
+
+      <div class="options-card suggestion-card" id="suggestionCard">
+        <div class="options-card-title">
+          <span class="suggestion-card-icon">💡</span>
+          <span data-i18n="suggestion.title">想要新功能？</span>
+        </div>
+        <div class="options-card-desc" data-i18n="suggestion.desc">告诉我们您需要的工具，我们将优先开发</div>
+        <div class="suggestion-privacy" data-i18n="suggestion.privacy_note">提交时将附带当前页面标题和域名，仅用于了解功能需求场景</div>
+        <div class="suggestion-input-wrapper">
+          <textarea id="optionsSuggestionInput" data-i18n-placeholder="suggestion.placeholder" placeholder="请输入您的建议（最多500字）…" maxlength="500"></textarea>
+        </div>
+        <div class="suggestion-row">
+          <span class="char-count" id="optionsCharCount">0 / 500</span>
+          <button class="submit-suggestion-btn" id="optionsSubmitSuggestionBtn" disabled data-i18n="suggestion.btn_submit">提交建议</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="options-footer">
+      <div class="save-status" id="saveStatus"></div>
+      <button class="save-btn" id="btnSave" data-i18n="settings.save_settings">
+        💾 保存设置
+      </button>
+    </div>
+
+    <div class="toast" id="toast" style="display:none;"></div>
+  </div>
+
+  <script src="utils/core.js"></script>
+  <script src="utils/shared.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

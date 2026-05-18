@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "文本工具箱",
+    "description": "扩展名称（Chrome 网上应用店和浏览器工具栏显示）"
+  },
+  "appDesc": {
+    "message": "轻量级网页文本工具箱：字数统计、Markdown导出、纯文本提取、二维码生成、大小写转换等。即选即用、隐私优先、模块化设计。",
+    "description": "扩展描述（Chrome 网上应用店显示，最多132个字符）"
+  }
+}

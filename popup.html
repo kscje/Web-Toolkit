@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="app.title">文本工具箱</title>
+  <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+  <div class="popup" id="popupRoot">
+    <div class="header">
+      <button class="header-back-btn" id="headerBackBtn" style="display:none;">←</button>
+      <div class="title" id="headerTitle" data-i18n="app.title">文本工具箱</div>
+      <button class="header-btn" id="settingsBtn" data-i18n-title="settings.title">⚙️</button>
+    </div>
+
+    <div class="content" id="contentArea">
+      <div class="view active" id="viewHome">
+        <div class="tool-grid" id="toolGrid">
+          <div class="tool-card wordcount" data-tool="wordcount" id="cardWordCount">
+            <div class="card-icon blue">📊</div>
+            <div class="card-name" data-i18n="tools.wordcount.name">字数统计</div>
+          </div>
+          <div class="tool-card plaintext" data-tool="plaintext" id="cardPlainText">
+            <div class="card-icon teal">📋</div>
+            <div class="card-name" data-i18n="tools.plaintext.name">纯文本提取</div>
+          </div>
+          <div class="tool-card textdedup" data-tool="textdedup" id="cardTextDedup">
+            <div class="card-icon pink">📑</div>
+            <div class="card-name" data-i18n="tools.textdedup.name">去重/排序</div>
+          </div>
+          <div class="tool-card markdown" data-tool="markdown" id="cardMarkdown">
+            <div class="card-icon purple">📝</div>
+            <div class="card-name" data-i18n="tools.markdown.name">导出Markdown</div>
+          </div>
+          <div class="tool-card caseconverter" data-tool="caseconverter" id="cardCaseConverter">
+            <div class="card-icon green">🔤</div>
+            <div class="card-name" data-i18n="tools.caseconverter.name">大小写/风格转换</div>
+          </div>
+          <div class="tool-card textreverser" data-tool="textreverser" id="cardTextReverser">
+            <div class="card-icon orange">🔄</div>
+            <div class="card-name" data-i18n="tools.textreverser.name">文本反转</div>
+          </div>
+          <div class="tool-card qrcode" data-tool="qrcode" id="cardQRCode">
+            <div class="card-icon orange">🔲</div>
+            <div class="card-name" data-i18n="tools.qrcode.name">二维码生成</div>
+          </div>
+          <div class="tool-card emojiconverter" data-tool="emojiconverter" id="cardEmojiConverter">
+            <div class="card-icon yellow">😄</div>
+            <div class="card-name" data-i18n="tools.emoji_converter.name">Emoji转换</div>
+          </div>
+        </div>
+
+        <div class="section-label" data-i18n="home.coming_soon">即将推出</div>
+        <div class="coming-card" data-i18n="home.coming_soon_desc">
+          📋 更多实用工具正在开发中，敬请期待…
+        </div>
+      </div>
+
+      <div class="view" id="viewPlainText">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.plaintext.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="full" data-i18n="tools.plaintext.mode_full">整个页面</button>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label" data-i18n="tools.plaintext.option_merge_lines">合并空行</div>
+            <div class="toggle-desc" data-i18n="tools.plaintext.option_merge_lines_desc">压缩连续空行为单个空行</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="ptMergeLinesToggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label" data-i18n="tools.plaintext.option_keep_urls">保留链接 URL</div>
+            <div class="toggle-desc" data-i18n="tools.plaintext.option_keep_urls_desc">在链接文本后附加原始网址</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="ptKeepURLsToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="result-area" id="ptResultArea">
+          <div class="preview-panel">
+            <div class="preview-body pt-preview" id="ptPreview"></div>
+          </div>
+
+          <div class="action-bar">
+            <button class="export-btn primary" id="btnCopyPT" data-i18n="tools.plaintext.btn_copy">📋 复制文本</button>
+            <button class="export-btn" id="btnDownloadPT" data-i18n="tools.plaintext.btn_download">💾 保存 .txt</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewSettings">
+
+        <div class="settings-section">
+          <button class="settings-full-btn" id="btnOpenFullSettings" data-i18n="settings.open_full_settings">打开全部设置</button>
+
+          <div class="settings-item suggestion-item" id="popupSuggestionSection">
+            <div class="settings-item-label">
+              <span data-i18n="suggestion.title">💡 想要新功能？</span>
+            </div>
+            <div class="suggestion-desc" data-i18n="suggestion.desc">告诉我们您需要的工具，我们将优先开发</div>
+            <div class="suggestion-privacy" data-i18n="suggestion.privacy_note">提交时将附带当前页面标题和域名，仅用于了解功能需求场景</div>
+            <div class="suggestion-input-wrapper">
+              <textarea id="popupSuggestionInput" data-i18n-placeholder="suggestion.placeholder" placeholder="请输入您的建议（最多500字）…" maxlength="500"></textarea>
+            </div>
+            <div class="suggestion-row">
+              <span class="suggestion-char-count" id="popupCharCount">0 / 500</span>
+              <button class="suggestion-submit-btn" id="popupSubmitSuggestionBtn" disabled data-i18n="suggestion.btn_submit">提交建议</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewWordCount">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.wordcount.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="full" data-i18n="tools.wordcount.mode_full">整个页面</button>
+        </div>
+
+        <div class="result-area show" id="wcResultArea">
+          <div class="stat-cards">
+            <div class="stat-card highlight">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_total_chars">总字符数</div>
+              <div class="stat-value" id="wcTotalChars">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_chars_no_space">不含空格</div>
+              <div class="stat-value" id="wcCharsNoSpace">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_chinese">中文字符</div>
+              <div class="stat-value" id="wcChinese">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_english">英文单词</div>
+              <div class="stat-value" id="wcEnglish">—</div>
+            </div>
+          </div>
+
+          <div class="stat-cards" id="wcPageExtras">
+            <div class="stat-card" id="wcCardImages">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_images">图片数</div>
+              <div class="stat-value" id="wcImages">—</div>
+            </div>
+            <div class="stat-card" id="wcCardVideos">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_videos">视频数</div>
+              <div class="stat-value" id="wcVideos">—</div>
+            </div>
+            <div class="stat-card" id="wcCardLinks">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_links">链接数</div>
+              <div class="stat-value" id="wcLinks">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_paragraphs">段落数</div>
+              <div class="stat-value" id="wcParagraphs">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label" data-i18n="tools.wordcount.stat_sentences">句子数</div>
+              <div class="stat-value" id="wcSentences">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewMarkdown">
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label" data-i18n="tools.markdown.option_preserve_indent">保留段首缩进</div>
+            <div class="toggle-desc" data-i18n="tools.markdown.option_preserve_indent_desc">保留原文中的段首缩进格式</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="mdPreserveIndentToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="no-selection-banner" id="mdNoSelectionBanner" style="display:none;">
+          <div class="banner-icon">⚠️</div>
+          <div class="banner-content">
+            <div class="banner-title" data-i18n="tools.markdown.no_selection_title">未选中内容</div>
+            <div class="banner-desc" data-i18n="tools.markdown.no_selection_desc">请先在网页上选中需要导出的文本内容，然后再打开此功能。</div>
+          </div>
+        </div>
+
+        <div class="result-area show" id="mdResultArea">
+          <div class="preview-panel">
+            <div class="preview-header">
+              <button class="preview-tab active" data-tab="source" data-i18n="tools.markdown.tab_source">源码</button>
+              <button class="preview-tab" data-tab="rendered" data-i18n="tools.markdown.tab_preview">预览</button>
+            </div>
+            <div class="preview-body" id="mdPreview"></div>
+          </div>
+
+          <div class="action-bar">
+            <button class="export-btn primary" id="btnCopyMD" data-i18n="tools.markdown.btn_copy">📋 复制源码</button>
+            <button class="export-btn" id="btnDownloadMD" data-i18n="tools.markdown.btn_download">💾 下载 .md</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewQRCode">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.qrcode.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="full" data-i18n="tools.qrcode.mode_full">当前页面</button>
+        </div>
+
+        <div class="result-area show" id="qrResultArea">
+          <div class="qr-content-label" id="qrContentLabel">
+            <span class="qr-content-label-icon">📄</span>
+            <span class="qr-content-text" id="qrContentText"></span>
+          </div>
+
+          <div class="qr-image-wrapper" id="qrImageWrapper">
+            <img id="qrImage" alt="QR Code">
+          </div>
+
+          <div class="action-bar">
+            <button class="export-btn primary" id="btnCopyQR" data-i18n="tools.qrcode.btn_copy">📋 复制二维码</button>
+            <button class="export-btn" id="btnDownloadQR" data-i18n="tools.qrcode.btn_download">💾 下载二维码</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="viewCaseConverter">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.caseconverter.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.caseconverter.mode_manual">手动输入</button>
+        </div>
+
+        <div class="case-input-area" id="ccInputArea" style="display:none;">
+          <textarea id="ccManualInput" data-i18n-placeholder="tools.caseconverter.placeholder_input" placeholder="请输入或粘贴文本…" maxlength="5000"></textarea>
+          <div class="case-char-count" id="ccCharCount">0 / 5000</div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.caseconverter.label_source" id="ccSourceLabel">源文本</div>
+        <div class="preview-panel" id="ccSourcePanel">
+          <div class="preview-body" id="ccSourceText"></div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.caseconverter.label_convert">转换方式</div>
+        <div class="case-convert-grid" id="ccConvertGrid">
+        </div>
+
+        <div class="section-label" data-i18n="tools.caseconverter.label_result">转换结果</div>
+        <div class="preview-panel">
+          <div class="preview-body cc-result" id="ccResultText"></div>
+        </div>
+
+        <div class="action-bar">
+          <button class="export-btn primary" id="btnCopyCC" data-i18n="tools.caseconverter.btn_copy">📋 复制结果</button>
+        </div>
+      </div>
+
+      <div class="view" id="viewTextReverser">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.textreverser.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.textreverser.mode_manual">手动输入</button>
+        </div>
+
+        <div class="reverse-input-area" id="trInputArea" style="display:none;">
+          <textarea id="trManualInput" data-i18n-placeholder="tools.textreverser.placeholder_input" placeholder="请输入或粘贴文本…" maxlength="5000"></textarea>
+          <div class="reverse-char-count" id="trCharCount">0 / 5000</div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.textreverser.label_source" id="trSourceLabel">源文本</div>
+        <div class="preview-panel" id="trSourcePanel">
+          <div class="preview-body" id="trSourceText"></div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.textreverser.label_reverse">反转方式</div>
+        <div class="reverse-grid" id="trReverseGrid">
+        </div>
+
+        <div class="section-label" data-i18n="tools.textreverser.label_result">反转结果</div>
+        <div class="preview-panel">
+          <div class="preview-body tr-result" id="trResultText"></div>
+        </div>
+
+        <div class="action-bar">
+          <button class="export-btn primary" id="btnCopyTR" data-i18n="tools.textreverser.btn_copy">📋 复制结果</button>
+        </div>
+      </div>
+
+      <div class="view" id="viewEmojiConverter">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.emoji_converter.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.emoji_converter.mode_manual">手动输入</button>
+        </div>
+
+        <div class="emoji-input-area" id="ecInputArea" style="display:none;">
+          <textarea id="ecManualInput" data-i18n-placeholder="tools.emoji_converter.placeholder_input" placeholder="请输入或粘贴文本…" maxlength="5000"></textarea>
+          <div class="emoji-char-count" id="ecCharCount">0 / 5000</div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.emoji_converter.label_source" id="ecSourceLabel">源文本</div>
+        <div class="preview-panel" id="ecSourcePanel">
+          <div class="preview-body" id="ecSourceText"></div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.emoji_converter.label_convert">转换方式</div>
+        <div class="emoji-convert-grid" id="ecConvertGrid">
+        </div>
+
+        <div class="section-label" data-i18n="tools.emoji_converter.label_result">转换结果</div>
+        <div class="preview-panel">
+          <div class="preview-body ec-result" id="ecResultText"></div>
+        </div>
+
+        <div class="action-bar">
+          <button class="export-btn primary" id="btnCopyEC" data-i18n="tools.emoji_converter.btn_copy">📋 复制结果</button>
+        </div>
+      </div>
+
+      <div class="view" id="viewTextDedup">
+
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.textdedup.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.textdedup.mode_manual">手动输入</button>
+        </div>
+
+        <div class="dedup-input-area" id="tdInputArea" style="display:none;">
+          <textarea id="tdManualInput" data-i18n-placeholder="tools.textdedup.placeholder_input" placeholder="请输入或粘贴文本（每行一条）…" maxlength="5000"></textarea>
+          <div class="dedup-char-count" id="tdCharCount">0 / 5000</div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.textdedup.label_source" id="tdSourceLabel">源文本</div>
+        <div class="preview-panel" id="tdSourcePanel">
+          <div class="preview-body" id="tdSourceText"></div>
+        </div>
+
+        <div class="section-label" data-i18n="tools.textdedup.label_options">操作选项</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label" data-i18n="tools.textdedup.option_ignore_blank">忽略空白行</div>
+            <div class="toggle-desc" data-i18n="tools.textdedup.option_ignore_blank_desc">处理前先移除空行</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="tdIgnoreBlankToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="section-label" data-i18n="tools.textdedup.label_operation">处理方式</div>
+        <div class="dedup-grid" id="tdOperationGrid">
+        </div>
+
+        <div class="section-label" data-i18n="tools.textdedup.label_result">处理结果</div>
+        <div class="preview-panel">
+          <div class="preview-body td-result" id="tdResultText"></div>
+        </div>
+
+        <div class="action-bar">
+          <button class="export-btn primary" id="btnCopyTD" data-i18n="tools.textdedup.btn_copy">📋 复制结果</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span class="pulse-dot"></span>
+      <span id="statusText" data-i18n="app.status_ready">就绪</span>
+    </div>
+
+    <div class="toast" id="toast" style="display:none;"></div>
+  </div>
+
+  <script src="utils/core.js"></script>
+  <script src="utils/shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

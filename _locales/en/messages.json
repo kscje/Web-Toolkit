@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "TextFlow",
+    "description": "Extension name displayed in the Chrome Web Store and browser toolbar"
+  },
+  "appDesc": {
+    "message": "Lightweight web text toolkit: word count, Markdown export, plain text, QR code, case converter & more. Instant, private, modular.",
+    "description": "Extension description shown in the Chrome Web Store (max 132 characters)"
+  }
+}

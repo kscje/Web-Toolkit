@@ -1,0 +1,15 @@
+.DS_Store
+**/.DS_Store
+
+dist/
+*.zip
+
+node_modules/
+.env
+.env.*
+
+backend/.wrangler/
+.wrangler/
+
+.idea/
+.vscode/

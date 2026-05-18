@@ -1,0 +1,8 @@
+name = "textflow-suggestions"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "textflow-suggestions-db"
+database_id = "31a13674-128a-44b6-a730-e0365ed9224a"

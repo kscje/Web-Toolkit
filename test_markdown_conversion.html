@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Markdown Conversion Test</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #f5f5f5; }
+.container { max-width: 1200px; margin: 0 auto; }
+.test-case { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.test-case h3 { margin-top: 0; color: #333; }
+.columns { display: flex; gap: 20px; }
+.column { flex: 1; }
+.label { font-weight: bold; color: #666; margin-bottom: 8px; font-size: 14px; }
+.html-source { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 12px; font-family: 'Monaco', 'Menlo', monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow: auto; }
+.markdown-result { background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 4px; padding: 12px; font-family: 'Monaco', 'Menlo', monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow: auto; }
+.status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+.status.pass { background: #d4edda; color: #155724; }
+.status.fail { background: #f8d7da; color: #721c24; }
+.summary { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.summary h2 { margin-top: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Markdown 导出功能测试</h1>
+<div class="summary" id="summary"></div>
+<div id="testResults"></div>
+</div>
+
+<script src="utils/shared.js"></script>
+<script src="tools/markdown.js"></script>
+<script>
+(function() {
+  var testCases = [
+    {
+      name: '基础标题与段落',
+      html: '<h1>一级标题</h1><h2>二级标题</h2><p>这是一个普通段落。</p><p>这是另一个段落，包含<strong>粗体</strong>和<em>斜体</em>。</p>',
+      checks: ['# 一级标题', '## 二级标题', '**粗体**', '*斜体*']
+    },
+    {
+      name: '列表测试',
+      html: '<ul><li>无序项一</li><li>无序项二</li></ul><ol><li>有序项一</li><li>有序项二</li></ol>',
+      checks: ['- 无序项一', '- 无序项二', '1. 有序项一', '2. 有序项二']
+    },
+    {
+      name: '嵌套列表',
+      html: '<ul><li>父项一<ul><li>子项一</li><li>子项二</li></ul></li><li>父项二</li></ul>',
+      checks: ['- 父项一', '  - 子项一', '  - 子项二', '- 父项二']
+    },
+    {
+      name: '链接与图片',
+      html: '<p>访问<a href="https://example.com">示例网站</a>获取更多信息。</p><p><img src="https://example.com/image.png" alt="示例图片"></p>',
+      checks: ['[示例网站](https://example.com)', '![示例图片](https://example.com/image.png)']
+    },
+    {
+      name: '代码块与行内代码',
+      html: '<p>使用<code>console.log()</code>输出日志。</p><pre><code>function hello() {\n  return "world";\n}</code></pre>',
+      checks: ['`console.log()`', '```', 'function hello()', 'return "world"', '```']
+    },
+    {
+      name: '引用块',
+      html: '<blockquote><p>这是引用内容。</p><p>引用的第二段。</p></blockquote>',
+      checks: ['> 这是引用内容', '> 引用的第二段']
+    },
+    {
+      name: '表格',
+      html: '<table><tr><th>姓名</th><th>年龄</th></tr><tr><td>张三</td><td>25</td></tr><tr><td>李四</td><td>30</td></tr></table>',
+      checks: ['| 姓名 | 年龄 |', '|---', '| 张三 | 25 |', '| 李四 | 30 |']
+    },
+    {
+      name: '混合格式',
+      html: '<h2>项目介绍</h2><p>本项目支持<strong>多种格式</strong>，包括<em>斜体</em>、<del>删除线</del>和<mark>高亮</mark>。</p><ul><li>功能一：<a href="https://example.com">查看详情</a></li><li>功能二：<code>npm install</code></li></ul><pre><code>const app = new App();\napp.run();</code></pre>',
+      checks: ['## 项目介绍', '**多种格式**', '*斜体*', '~~删除线~~', '==高亮==', '[查看详情](https://example.com)', '`npm install`', '```', 'const app = new App()', 'app.run()', '```']
+    },
+    {
+      name: '段落中的换行',
+      html: '<p>第一行<br>第二行<br/>第三行</p>',
+      checks: ['第一行\n第二行\n第三行']
+    },
+    {
+      name: '水平分割线',
+      html: '<p>上文</p><hr><p>下文</p>',
+      checks: ['---']
+    },
+    {
+      name: '列表项中包含段落',
+      html: '<ul><li><p>列表项中的段落一</p><p>列表项中的段落二</p></li></ul>',
+      checks: ['- 列表项中的段落一', '列表项中的段落二']
+    },
+    {
+      name: '嵌套格式（粗体中的链接）',
+      html: '<p><strong>点击<a href="https://example.com">这里</a>查看</strong></p>',
+      checks: ['**点击[这里](https://example.com)查看**']
+    }
+  ];
+
+  var results = [];
+  var container = document.getElementById('testResults');
+
+  testCases.forEach(function(test, index) {
+    var markdown = MarkdownTool.convertHTMLToMarkdown(test.html);
+    var passed = true;
+    var failedChecks = [];
+
+    test.checks.forEach(function(check) {
+      if (!markdown.includes(check)) {
+        passed = false;
+        failedChecks.push(check);
+      }
+    });
+
+    results.push({ name: test.name, passed: passed, html: test.html, markdown: markdown, failedChecks: failedChecks });
+
+    var caseDiv = document.createElement('div');
+    caseDiv.className = 'test-case';
+    caseDiv.innerHTML =
+      '<h3>#' + (index + 1) + ' ' + test.name +
+      '<span class="status ' + (passed ? 'pass' : 'fail') + '">' + (passed ? '通过' : '失败') + '</span></h3>' +
+      '<div class="columns">' +
+      '<div class="column"><div class="label">HTML 输入</div><div class="html-source">' + escapeHtml(test.html) + '</div></div>' +
+      '<div class="column"><div class="label">Markdown 输出</div><div class="markdown-result">' + escapeHtml(markdown) + '</div></div>' +
+      '</div>' +
+      (failedChecks.length > 0 ? '<div style="margin-top:10px;color:#721c24;background:#f8d7da;padding:8px 12px;border-radius:4px;"><strong>未找到的内容：</strong> ' + failedChecks.map(escapeHtml).join(', ') + '</div>' : '');
+    container.appendChild(caseDiv);
+  });
+
+  var passCount = results.filter(function(r) { return r.passed; }).length;
+  var summaryDiv = document.getElementById('summary');
+  summaryDiv.innerHTML =
+    '<h2>测试结果摘要</h2>' +
+    '<p>总测试数：' + results.length + '</p>' +
+    '<p>通过：' + passCount + ' &nbsp;|&nbsp; 失败：' + (results.length - passCount) + '</p>' +
+    '<p style="font-size:18px;font-weight:bold;color:' + (passCount === results.length ? '#28a745' : '#dc3545') + '">' +
+    (passCount === results.length ? '所有测试全部通过！' : '存在失败的测试用例，请检查。') +
+    '</p>';
+
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextFlow Store Assets Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6f9;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+  h1 { font-size: 22px; color: #1a1d26; margin-bottom: 10px; }
+  .subtitle { color: #5f6b7a; font-size: 13px; margin-bottom: 20px; }
+
+  .asset-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    width: 100%;
+    max-width: 1400px;
+  }
+  .asset-section h2 {
+    font-size: 16px;
+    color: #1a1d26;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .canvas-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+  }
+  .canvas-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .canvas-wrap label {
+    font-size: 12px;
+    color: #5f6b7a;
+    font-weight: 600;
+  }
+  canvas {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: #fff;
+  }
+  .download-btn {
+    margin-top: 16px;
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #4361ee, #3a56d4);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .download-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(67,97,238,0.3);
+  }
+  .note {
+    font-size: 12px;
+    color: #9099a8;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+  .lang-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 8px;
+  }
+  .lang-tag.en { background: #eef0ff; color: #4361ee; }
+  .lang-tag.zh { background: #e6faf7; color: #2ec4b6; }
+</style>
+</head>
+<body>
+
+<h1>TextFlow / 文本工具箱 — 商店素材生成器</h1>
+<p class="subtitle">点击下方按钮下载各尺寸图标、宣传图与截图素材</p>
+
+<!-- Icons Section -->
+<div class="asset-section">
+  <h2>🎨 图标素材 (Icons)</h2>
+  <div class="canvas-grid" id="iconGrid"></div>
+  <button class="download-btn" onclick="downloadAllIcons()">下载全部图标</button>
+  <p class="note">尺寸：128x128、48x48、32x32、16x16 | 格式：PNG | 背景：透明</p>
+</div>
+
+<!-- Marquee Section -->
+<div class="asset-section">
+  <h2>🖼️ 主宣传图 (Marquee / Promo Tile)</h2>
+  <div class="canvas-grid" id="marqueeGrid"></div>
+  <button class="download-btn" onclick="downloadAllMarquees()">下载全部宣传图</button>
+  <p class="note">尺寸：1400x560px（大）+ 440x280px（小）| 格式：PNG | 含英文版与中文版</p>
+</div>
+
+<!-- Screenshots Section -->
+<div class="asset-section">
+  <h2>📸 功能截图 (Screenshots)</h2>
+  <div class="canvas-grid" id="screenshotGrid"></div>
+  <button class="download-btn" onclick="downloadAllScreenshots()">下载全部截图</button>
+  <p class="note">尺寸：1280x800px | 格式：PNG | 至少4张，展示不同使用场景</p>
+</div>
+
+<script>
+// ==================== Brand Colors ====================
+const BRAND = {
+  primary: '#4361ee',
+  primaryDark: '#3a56d4',
+  accent: '#7209b7',
+  success: '#2ec4b6',
+  warning: '#ff9f1c',
+  text: '#1a1d26',
+  textSec: '#5f6b7a',
+  bg: '#f4f6f9',
+  surface: '#ffffff'
+};
+
+// ==================== Icon Generator ====================
+function drawIcon(ctx, size) {
+  const center = size / 2;
+  const scale = size / 128;
+
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, BRAND.primary);
+  grad.addColorStop(1, BRAND.accent);
+
+  ctx.beginPath();
+  ctx.arc(center, center, size * 0.46, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(center, center, size * 0.42, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(center, center);
+  ctx.scale(scale, scale);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(-28, -18);
+  ctx.lineTo(28, -18);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(-18, -6);
+  ctx.lineTo(22, -6);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(-28, 6);
+  ctx.lineTo(28, 6);
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, -4, -28, 8, 56, 3);
+  ctx.fill();
+  ctx.beginPath();
+  roundRect(ctx, -20, -28, 40, 8, 3);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(22, 18, 4, 0, Math.PI * 2);
+  ctx.fillStyle = BRAND.success;
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  if (typeof r === 'object') {
+    const { tl = 0, tr = 0, br = 0, bl = 0 } = r;
+    ctx.moveTo(x + tl, y);
+    ctx.lineTo(x + w - tr, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + tr);
+    ctx.lineTo(x + w, y + h - br);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+    ctx.lineTo(x + bl, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - bl);
+    ctx.lineTo(x, y + tl);
+    ctx.quadraticCurveTo(x, y, x + tl, y);
+    ctx.closePath();
+    return;
+  }
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function createIconCanvas(size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  drawIcon(ctx, size);
+  return canvas;
+}
+
+// ==================== Marquee Generator (English) ====================
+function drawMarqueeEn(ctx, w, h) {
+  const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+  bgGrad.addColorStop(0, '#1a1d26');
+  bgGrad.addColorStop(0.6, '#25283a');
+  bgGrad.addColorStop(1, '#4361ee');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.beginPath();
+  ctx.arc(w * 0.85, h * 0.25, 180, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(67,97,238,0.15)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(w * 0.15, h * 0.75, 120, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(114,9,183,0.12)';
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+  }
+  for (let y = 0; y < h; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.translate(140, h / 2);
+  ctx.scale(1.6, 1.6);
+  drawIcon(ctx, 128);
+  ctx.restore();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 64px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('TextFlow', 280, h / 2 - 20);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = '28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Lightweight Web Text Toolkit', 280, h / 2 + 30);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Word Count · Markdown Export · Plain Text · QR Code · Case Converter', 280, h / 2 + 70);
+
+  const badges = ['Rich Toolkit', 'Privacy First', 'Bilingual', 'Instant'];
+  let bx = 280;
+  badges.forEach((badge, i) => {
+    const bw = ctx.measureText(badge).width + 32;
+    ctx.beginPath();
+    roundRect(ctx, bx, h / 2 + 100, bw, 36, 18);
+    ctx.fillStyle = i === 0 ? BRAND.primary : 'rgba(255,255,255,0.1)';
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(badge, bx + 16, h / 2 + 124);
+    bx += bw + 12;
+  });
+}
+
+// ==================== Marquee Generator (Chinese) ====================
+function drawMarqueeZh(ctx, w, h) {
+  const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+  bgGrad.addColorStop(0, '#1a1d26');
+  bgGrad.addColorStop(0.6, '#25283a');
+  bgGrad.addColorStop(1, '#4361ee');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.beginPath();
+  ctx.arc(w * 0.85, h * 0.25, 180, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(67,97,238,0.15)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(w * 0.15, h * 0.75, 120, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(114,9,183,0.12)';
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+  }
+  for (let y = 0; y < h; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.translate(140, h / 2);
+  ctx.scale(1.6, 1.6);
+  drawIcon(ctx, 128);
+  ctx.restore();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 64px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('TextFlow', 280, h / 2 - 20);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = '28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('轻量级网页文本工具箱', 280, h / 2 + 30);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('字数统计 · Markdown导出 · 纯文本提取 · 二维码 · 大小写转换', 280, h / 2 + 70);
+
+  const badges = ['丰富工具集', '隐私优先', '双语界面', '即选即用'];
+  let bx = 280;
+  badges.forEach((badge, i) => {
+    const bw = ctx.measureText(badge).width + 32;
+    ctx.beginPath();
+    roundRect(ctx, bx, h / 2 + 100, bw, 36, 18);
+    ctx.fillStyle = i === 0 ? BRAND.primary : 'rgba(255,255,255,0.1)';
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText(badge, bx + 16, h / 2 + 124);
+    bx += bw + 12;
+  });
+}
+
+// ==================== Small Tile Generator (English) ====================
+function drawSmallTileEn(ctx, w, h) {
+  const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+  bgGrad.addColorStop(0, '#1a1d26');
+  bgGrad.addColorStop(0.6, '#25283a');
+  bgGrad.addColorStop(1, '#4361ee');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.beginPath();
+  ctx.arc(w * 0.85, h * 0.2, 80, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(67,97,238,0.15)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(w * 0.1, h * 0.8, 50, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(114,9,183,0.12)';
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(50, h / 2);
+  ctx.scale(0.7, 0.7);
+  drawIcon(ctx, 128);
+  ctx.restore();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('TextFlow', 110, h / 2 - 10);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Lightweight Web Text Toolkit', 110, h / 2 + 18);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Word Count · Markdown · Plain Text · QR Code', 110, h / 2 + 40);
+
+  const badges = ['Rich Toolkit', 'Privacy First'];
+  let bx = 110;
+  badges.forEach((badge, i) => {
+    const bw = ctx.measureText(badge).width + 16;
+    ctx.beginPath();
+    roundRect(ctx, bx, h / 2 + 52, bw, 20, 10);
+    ctx.fillStyle = i === 0 ? BRAND.primary : 'rgba(255,255,255,0.1)';
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(badge, bx + 8, h / 2 + 66);
+    bx += bw + 8;
+  });
+}
+
+// ==================== Small Tile Generator (Chinese) ====================
+function drawSmallTileZh(ctx, w, h) {
+  const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+  bgGrad.addColorStop(0, '#1a1d26');
+  bgGrad.addColorStop(0.6, '#25283a');
+  bgGrad.addColorStop(1, '#4361ee');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.beginPath();
+  ctx.arc(w * 0.85, h * 0.2, 80, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(67,97,238,0.15)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(w * 0.1, h * 0.8, 50, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(114,9,183,0.12)';
+  ctx.fill();
+
+  ctx.save();
+  ctx.translate(50, h / 2);
+  ctx.scale(0.7, 0.7);
+  drawIcon(ctx, 128);
+  ctx.restore();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('TextFlow', 110, h / 2 - 10);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('轻量级网页文本工具箱', 110, h / 2 + 18);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('字数统计 · Markdown导出 · 纯文本 · 二维码', 110, h / 2 + 40);
+
+  const badges = ['丰富工具集', '隐私优先'];
+  let bx = 110;
+  badges.forEach((badge, i) => {
+    const bw = ctx.measureText(badge).width + 16;
+    ctx.beginPath();
+    roundRect(ctx, bx, h / 2 + 52, bw, 20, 10);
+    ctx.fillStyle = i === 0 ? BRAND.primary : 'rgba(255,255,255,0.1)';
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText(badge, bx + 8, h / 2 + 66);
+    bx += bw + 8;
+  });
+}
+
+// ==================== Screenshot Generators ====================
+function drawScreenshotHome(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'https://example.com/article');
+
+  const pw = 340, ph = 480;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+  ctx.shadowColor = 'rgba(0,0,0,0.15)';
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetY = 10;
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  hGrad.addColorStop(0, BRAND.primary);
+  hGrad.addColorStop(1, BRAND.accent);
+  ctx.fillStyle = hGrad;
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('TextFlow', px + 18, py + 32);
+
+  const tools = [
+    { icon: '📊', name: 'Word Count', color: '#eef0ff', text: '#4361ee' },
+    { icon: '📋', name: 'Plain Text', color: '#e6faf7', text: '#2ec4b6' },
+    { icon: '📑', name: 'Dedup/Sort', color: '#fff0f5', text: '#f72585' },
+    { icon: '📝', name: 'Markdown', color: '#f8f0ff', text: '#7209b7' },
+    { icon: '🔤', name: 'Case', color: '#e6faf0', text: '#2ecc71' },
+    { icon: '🔄', name: 'Reverse', color: '#fff0e6', text: '#ff6b35' },
+    { icon: '🔲', name: 'QR Code', color: '#fff8e6', text: '#ff9f1c' },
+    { icon: '😄', name: 'Emoji', color: '#fffdf0', text: '#f0b400' }
+  ];
+
+  const cols = 3, gap = 10, cardW = (pw - 36 - gap * 2) / cols;
+  tools.forEach((tool, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const cx = px + 18 + col * (cardW + gap);
+    const cy = py + 65 + row * (cardW + gap);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#e7eaf0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    roundRect(ctx, cx, cy, cardW, cardW, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = tool.color;
+    ctx.beginPath();
+    roundRect(ctx, cx + cardW/2 - 16, cy + 14, 32, 32, 8);
+    ctx.fill();
+
+    ctx.fillStyle = tool.text;
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(tool.icon, cx + cardW/2, cy + 36);
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = '#1a1d26';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(tool.name, cx + cardW/2, cy + cardW - 14);
+    ctx.textAlign = 'left';
+  });
+
+  const ccy = py + 65 + 3 * (cardW + gap) + 10;
+  ctx.fillStyle = '#fafbfc';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  roundRect(ctx, px + 18, ccy, pw - 36, 40, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#9099a8';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('More tools coming soon...', px + pw/2, ccy + 25);
+  ctx.textAlign = 'left';
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Tool Panel Home — Rich Toolkit Collection', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawScreenshotWordCount(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'https://medium.com/article');
+
+  const pw = 340, ph = 420;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  hGrad.addColorStop(0, BRAND.primary);
+  hGrad.addColorStop(1, BRAND.accent);
+  ctx.fillStyle = hGrad;
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('←  Word Count', px + 18, py + 32);
+
+  ctx.fillStyle = '#eef0ff';
+  ctx.strokeStyle = BRAND.primary;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + 65, 140, 34, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = BRAND.primary;
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Selection', px + 58, py + 86);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.beginPath();
+  roundRect(ctx, px + 170, py + 65, 140, 34, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#9099a8';
+  ctx.fillText('Full Page', px + 210, py + 86);
+
+  const stats = [
+    { label: 'Total Characters', value: '2,847', highlight: true },
+    { label: 'No Spaces', value: '2,531' },
+    { label: 'Chinese Chars', value: '1,236' },
+    { label: 'English Words', value: '567' },
+    { label: 'Paragraphs', value: '24' },
+    { label: 'Images', value: '5' }
+  ];
+
+  stats.forEach((stat, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const sx = px + 18 + col * 152;
+    const sy = py + 115 + row * 72;
+
+    ctx.fillStyle = stat.highlight ? '#eef0ff' : '#ffffff';
+    ctx.strokeStyle = stat.highlight ? BRAND.primary : '#e7eaf0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    roundRect(ctx, sx, sy, 140, 62, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#9099a8';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(stat.label, sx + 12, sy + 22);
+
+    ctx.fillStyle = stat.highlight ? BRAND.primary : '#1a1d26';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(stat.value, sx + 12, sy + 50);
+  });
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Word Count — Selection & Full-Page Modes', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawScreenshotMarkdown(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'https://docs.example.com');
+
+  const pw = 380, ph = 440;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  hGrad.addColorStop(0, BRAND.primary);
+  hGrad.addColorStop(1, BRAND.accent);
+  ctx.fillStyle = hGrad;
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('←  Markdown Export', px + 18, py + 32);
+
+  ctx.fillStyle = '#eef0ff';
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + 62, 100, 30, 8);
+  ctx.fill();
+  ctx.fillStyle = BRAND.primary;
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('Source', px + 50, py + 81);
+
+  ctx.fillStyle = '#fafbfc';
+  ctx.beginPath();
+  roundRect(ctx, px + 126, py + 62, 100, 30, 8);
+  ctx.fill();
+  ctx.fillStyle = '#9099a8';
+  ctx.fillText('Preview', px + 156, py + 81);
+
+  ctx.fillStyle = '#fafbfc';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + 102, pw - 36, 200, 12);
+  ctx.fill();
+  ctx.stroke();
+
+  const lines = [
+    { text: '# Getting Started', color: BRAND.primary },
+    { text: '', color: '#5f6b7a' },
+    { text: 'This guide covers **installation**', color: '#5f6b7a' },
+    { text: 'and basic usage.', color: '#5f6b7a' },
+    { text: '', color: '#5f6b7a' },
+    { text: '## Requirements', color: BRAND.accent },
+    { text: '', color: '#5f6b7a' },
+    { text: '- Node.js 18+', color: '#5f6b7a' },
+    { text: '- Chrome 80+', color: '#5f6b7a' },
+    { text: '', color: '#5f6b7a' },
+    { text: '```bash', color: '#ff9f1c' },
+    { text: 'npm install', color: '#2ec4b6' }
+  ];
+
+  ctx.font = '12px "SF Mono", "Fira Code", monospace';
+  lines.forEach((line, i) => {
+    ctx.fillStyle = line.color;
+    ctx.fillText(line.text, px + 30, py + 126 + i * 16);
+  });
+
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.fillRect(px + 1, py + ph - 70, pw - 2, 69);
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.beginPath();
+  ctx.moveTo(px + 18, py + ph - 70);
+  ctx.lineTo(px + pw - 18, py + ph - 70);
+  ctx.stroke();
+
+  ctx.fillStyle = BRAND.primary;
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + ph - 58, 160, 42, 12);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('📋  Copy Source', px + 50, py + ph - 32);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  roundRect(ctx, px + 190, py + ph - 58, 160, 42, 12);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('💾  Download .md', px + 218, py + ph - 32);
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Markdown Export — Source/Preview Dual View', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawScreenshotSettings(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'chrome-extension://.../options.html');
+
+  const pw = 420, ph = 460;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 20px sans-serif';
+  ctx.fillText('Settings', px + 24, py + 44);
+
+  ctx.fillStyle = '#5f6b7a';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('LANGUAGE', px + 24, py + 80);
+
+  ctx.fillStyle = '#eef0ff';
+  ctx.strokeStyle = BRAND.primary;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  roundRect(ctx, px + 24, py + 92, 120, 40, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = BRAND.primary;
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('English', px + 52, py + 117);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.beginPath();
+  roundRect(ctx, px + 156, py + 92, 120, 40, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#5f6b7a';
+  ctx.fillText('中文', px + 196, py + 117);
+
+  ctx.fillStyle = '#5f6b7a';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('FEATURE MANAGEMENT', px + 24, py + 160);
+
+  const features = [
+    { name: '📊  Word Count', on: true },
+    { name: '📝  Markdown Export', on: true },
+    { name: '📋  Plain Text', on: true },
+    { name: '🔲  QR Code', on: true },
+    { name: '🔤  Case Converter', on: false },
+    { name: '🔄  Text Reverser', on: true }
+  ];
+
+  features.forEach((feat, i) => {
+    const fy = py + 178 + i * 44;
+
+    ctx.fillStyle = '#fafbfc';
+    ctx.strokeStyle = '#e7eaf0';
+    ctx.beginPath();
+    roundRect(ctx, px + 24, fy, pw - 48, 38, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#c5c9d0';
+    for (let r = 0; r < 2; r++) {
+      for (let c = 0; c < 3; c++) {
+        ctx.beginPath();
+        ctx.arc(px + 40 + c * 5, fy + 14 + r * 5, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    ctx.fillStyle = '#1a1d26';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(feat.name, px + 64, fy + 24);
+
+    ctx.fillStyle = feat.on ? BRAND.primary : '#d1d5db';
+    ctx.beginPath();
+    roundRect(ctx, px + pw - 72, fy + 8, 40, 22, 11);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(px + (feat.on ? pw - 56 : pw - 48), fy + 19, 9, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Feature Management — Enable/Disable & Reorder', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+// ==================== Screenshot Generators (Chinese) ====================
+function drawScreenshotHomeZh(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'https://example.com/article');
+
+  const pw = 340, ph = 480;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+  ctx.shadowColor = 'rgba(0,0,0,0.15)';
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetY = 10;
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  hGrad.addColorStop(0, BRAND.primary);
+  hGrad.addColorStop(1, BRAND.accent);
+  ctx.fillStyle = hGrad;
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('文本工具箱', px + 18, py + 32);
+
+  const tools = [
+    { icon: '📊', name: '字数统计', color: '#eef0ff', text: '#4361ee' },
+    { icon: '📋', name: '纯文本提取', color: '#e6faf7', text: '#2ec4b6' },
+    { icon: '📑', name: '去重/排序', color: '#fff0f5', text: '#f72585' },
+    { icon: '📝', name: '导出Markdown', color: '#f8f0ff', text: '#7209b7' },
+    { icon: '🔤', name: '大小写转换', color: '#e6faf0', text: '#2ecc71' },
+    { icon: '🔄', name: '文本反转', color: '#fff0e6', text: '#ff6b35' },
+    { icon: '🔲', name: '二维码生成', color: '#fff8e6', text: '#ff9f1c' },
+    { icon: '😄', name: 'Emoji转换', color: '#fffdf0', text: '#f0b400' }
+  ];
+
+  const cols = 3, gap = 10, cardW = (pw - 36 - gap * 2) / cols;
+  tools.forEach((tool, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const cx = px + 18 + col * (cardW + gap);
+    const cy = py + 65 + row * (cardW + gap);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#e7eaf0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    roundRect(ctx, cx, cy, cardW, cardW, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = tool.color;
+    ctx.beginPath();
+    roundRect(ctx, cx + cardW/2 - 16, cy + 14, 32, 32, 8);
+    ctx.fill();
+
+    ctx.fillStyle = tool.text;
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(tool.icon, cx + cardW/2, cy + 36);
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = '#1a1d26';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(tool.name, cx + cardW/2, cy + cardW - 14);
+    ctx.textAlign = 'left';
+  });
+
+  const ccy = py + 65 + 3 * (cardW + gap) + 10;
+  ctx.fillStyle = '#fafbfc';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  roundRect(ctx, px + 18, ccy, pw - 36, 40, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#9099a8';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('更多工具即将推出…', px + pw/2, ccy + 25);
+  ctx.textAlign = 'left';
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('工具面板首页 — 丰富的工具集合', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawScreenshotWordCountZh(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'https://medium.com/article');
+
+  const pw = 340, ph = 420;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  hGrad.addColorStop(0, BRAND.primary);
+  hGrad.addColorStop(1, BRAND.accent);
+  ctx.fillStyle = hGrad;
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('←  字数统计', px + 18, py + 32);
+
+  ctx.fillStyle = '#eef0ff';
+  ctx.strokeStyle = BRAND.primary;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + 65, 140, 34, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = BRAND.primary;
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('选中内容', px + 58, py + 86);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.beginPath();
+  roundRect(ctx, px + 170, py + 65, 140, 34, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#9099a8';
+  ctx.fillText('整个页面', px + 210, py + 86);
+
+  const stats = [
+    { label: '总字符数', value: '2,847', highlight: true },
+    { label: '不含空格', value: '2,531' },
+    { label: '中文字符', value: '1,236' },
+    { label: '英文单词', value: '567' },
+    { label: '段落数', value: '24' },
+    { label: '图片数', value: '5' }
+  ];
+
+  stats.forEach((stat, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const sx = px + 18 + col * 152;
+    const sy = py + 115 + row * 72;
+
+    ctx.fillStyle = stat.highlight ? '#eef0ff' : '#ffffff';
+    ctx.strokeStyle = stat.highlight ? BRAND.primary : '#e7eaf0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    roundRect(ctx, sx, sy, 140, 62, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#9099a8';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(stat.label, sx + 12, sy + 22);
+
+    ctx.fillStyle = stat.highlight ? BRAND.primary : '#1a1d26';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(stat.value, sx + 12, sy + 50);
+  });
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('字数统计 — 选中内容与全页模式', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawScreenshotMarkdownZh(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'https://docs.example.com');
+
+  const pw = 380, ph = 440;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  hGrad.addColorStop(0, BRAND.primary);
+  hGrad.addColorStop(1, BRAND.accent);
+  ctx.fillStyle = hGrad;
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('←  导出Markdown', px + 18, py + 32);
+
+  ctx.fillStyle = '#eef0ff';
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + 62, 100, 30, 8);
+  ctx.fill();
+  ctx.fillStyle = BRAND.primary;
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('源码', px + 50, py + 81);
+
+  ctx.fillStyle = '#fafbfc';
+  ctx.beginPath();
+  roundRect(ctx, px + 126, py + 62, 100, 30, 8);
+  ctx.fill();
+  ctx.fillStyle = '#9099a8';
+  ctx.fillText('预览', px + 156, py + 81);
+
+  ctx.fillStyle = '#fafbfc';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + 102, pw - 36, 200, 12);
+  ctx.fill();
+  ctx.stroke();
+
+  const lines = [
+    { text: '# 快速开始', color: BRAND.primary },
+    { text: '', color: '#5f6b7a' },
+    { text: '本指南涵盖 **安装**', color: '#5f6b7a' },
+    { text: '与基本使用方法。', color: '#5f6b7a' },
+    { text: '', color: '#5f6b7a' },
+    { text: '## 环境要求', color: BRAND.accent },
+    { text: '', color: '#5f6b7a' },
+    { text: '- Node.js 18+', color: '#5f6b7a' },
+    { text: '- Chrome 80+', color: '#5f6b7a' },
+    { text: '', color: '#5f6b7a' },
+    { text: '```bash', color: '#ff9f1c' },
+    { text: 'npm install', color: '#2ec4b6' }
+  ];
+
+  ctx.font = '12px "SF Mono", "Fira Code", monospace';
+  lines.forEach((line, i) => {
+    ctx.fillStyle = line.color;
+    ctx.fillText(line.text, px + 30, py + 126 + i * 16);
+  });
+
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.fillRect(px + 1, py + ph - 70, pw - 2, 69);
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.beginPath();
+  ctx.moveTo(px + 18, py + ph - 70);
+  ctx.lineTo(px + pw - 18, py + ph - 70);
+  ctx.stroke();
+
+  ctx.fillStyle = BRAND.primary;
+  ctx.beginPath();
+  roundRect(ctx, px + 18, py + ph - 58, 160, 42, 12);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('📋  复制源码', px + 50, py + ph - 32);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  roundRect(ctx, px + 190, py + ph - 58, 160, 42, 12);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('💾  下载 .md', px + 218, py + ph - 32);
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Markdown导出 — 源码/预览双视图', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawScreenshotSettingsZh(ctx, w, h) {
+  drawBrowserChrome(ctx, w, h, 'chrome-extension://.../options.html');
+
+  const pw = 420, ph = 460;
+  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, px, py, pw, ph, 16);
+  ctx.fill();
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 20px sans-serif';
+  ctx.fillText('设置', px + 24, py + 44);
+
+  ctx.fillStyle = '#5f6b7a';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('界面语言', px + 24, py + 80);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#e7eaf0';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  roundRect(ctx, px + 24, py + 92, 120, 40, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#5f6b7a';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('English', px + 52, py + 117);
+
+  ctx.fillStyle = '#eef0ff';
+  ctx.strokeStyle = BRAND.primary;
+  ctx.beginPath();
+  roundRect(ctx, px + 156, py + 92, 120, 40, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = BRAND.primary;
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('中文', px + 196, py + 117);
+
+  ctx.fillStyle = '#5f6b7a';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('功能块管理', px + 24, py + 160);
+
+  const features = [
+    { name: '📊  字数统计', on: true },
+    { name: '📝  导出Markdown', on: true },
+    { name: '📋  纯文本提取', on: true },
+    { name: '🔲  二维码生成', on: true },
+    { name: '🔤  大小写转换', on: false },
+    { name: '🔄  文本反转', on: true }
+  ];
+
+  features.forEach((feat, i) => {
+    const fy = py + 178 + i * 44;
+
+    ctx.fillStyle = '#fafbfc';
+    ctx.strokeStyle = '#e7eaf0';
+    ctx.beginPath();
+    roundRect(ctx, px + 24, fy, pw - 48, 38, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#c5c9d0';
+    for (let r = 0; r < 2; r++) {
+      for (let c = 0; c < 3; c++) {
+        ctx.beginPath();
+        ctx.arc(px + 40 + c * 5, fy + 14 + r * 5, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    ctx.fillStyle = '#1a1d26';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(feat.name, px + 64, fy + 24);
+
+    ctx.fillStyle = feat.on ? BRAND.primary : '#d1d5db';
+    ctx.beginPath();
+    roundRect(ctx, px + pw - 72, fy + 8, 40, 22, 11);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(px + (feat.on ? pw - 56 : pw - 48), fy + 19, 9, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = '#1a1d26';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('功能块管理 — 启用/禁用与排序', w / 2, h - 30);
+  ctx.textAlign = 'left';
+}
+
+function drawBrowserChrome(ctx, w, h, url) {
+  ctx.fillStyle = '#e8eaf0';
+  ctx.beginPath();
+  roundRect(ctx, 20, 20, w - 40, h - 40, 12);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  roundRect(ctx, 20, 20, w - 40, 44, {tl: 12, tr: 12, bl: 0, br: 0});
+  ctx.fill();
+
+  const lights = ['#ff5f57', '#febc2e', '#28c840'];
+  lights.forEach((color, i) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(48 + i * 18, 42, 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = '#f4f6f9';
+  ctx.beginPath();
+  roundRect(ctx, w / 2 - 200, 30, 400, 24, 8);
+  ctx.fill();
+  ctx.fillStyle = '#5f6b7a';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('🔒  ' + url, w / 2 - 180, 47);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(20, 64, w - 40, h - 104);
+
+  ctx.fillStyle = '#f4f6f9';
+  for (let i = 0; i < 8; i++) {
+    const lw = 200 + Math.random() * 300;
+    ctx.beginPath();
+    roundRect(ctx, 60, 100 + i * 36, lw, 14, 4);
+    ctx.fill();
+  }
+}
+
+// ==================== Render All ====================
+function render() {
+  const iconGrid = document.getElementById('iconGrid');
+  const iconSizes = [128, 48, 32, 16];
+  iconSizes.forEach(size => {
+    const wrap = document.createElement('div');
+    wrap.className = 'canvas-wrap';
+    const label = document.createElement('label');
+    label.textContent = size + '×' + size;
+    const canvas = createIconCanvas(size);
+    canvas.id = 'icon-' + size;
+    wrap.appendChild(label);
+    wrap.appendChild(canvas);
+    iconGrid.appendChild(wrap);
+  });
+
+  const marqueeGrid = document.getElementById('marqueeGrid');
+
+  // Large EN
+  const marqueeEn = document.createElement('canvas');
+  marqueeEn.width = 1400;
+  marqueeEn.height = 560;
+  marqueeEn.id = 'marquee-en';
+  drawMarqueeEn(marqueeEn.getContext('2d'), 1400, 560);
+  const mWrapEn = document.createElement('div');
+  mWrapEn.className = 'canvas-wrap';
+  const mLabelEn = document.createElement('label');
+  mLabelEn.innerHTML = '1400×560 <span class="lang-tag en">EN</span>';
+  mWrapEn.appendChild(mLabelEn);
+  mWrapEn.appendChild(marqueeEn);
+  marqueeGrid.appendChild(mWrapEn);
+
+  // Large ZH
+  const marqueeZh = document.createElement('canvas');
+  marqueeZh.width = 1400;
+  marqueeZh.height = 560;
+  marqueeZh.id = 'marquee-zh';
+  drawMarqueeZh(marqueeZh.getContext('2d'), 1400, 560);
+  const mWrapZh = document.createElement('div');
+  mWrapZh.className = 'canvas-wrap';
+  const mLabelZh = document.createElement('label');
+  mLabelZh.innerHTML = '1400×560 <span class="lang-tag zh">中文</span>';
+  mWrapZh.appendChild(mLabelZh);
+  mWrapZh.appendChild(marqueeZh);
+  marqueeGrid.appendChild(mWrapZh);
+
+  // Small EN
+  const smallEn = document.createElement('canvas');
+  smallEn.width = 440;
+  smallEn.height = 280;
+  smallEn.id = 'small-en';
+  drawSmallTileEn(smallEn.getContext('2d'), 440, 280);
+  const sWrapEn = document.createElement('div');
+  sWrapEn.className = 'canvas-wrap';
+  const sLabelEn = document.createElement('label');
+  sLabelEn.innerHTML = '440×280 <span class="lang-tag en">EN</span>';
+  sWrapEn.appendChild(sLabelEn);
+  sWrapEn.appendChild(smallEn);
+  marqueeGrid.appendChild(sWrapEn);
+
+  // Small ZH
+  const smallZh = document.createElement('canvas');
+  smallZh.width = 440;
+  smallZh.height = 280;
+  smallZh.id = 'small-zh';
+  drawSmallTileZh(smallZh.getContext('2d'), 440, 280);
+  const sWrapZh = document.createElement('div');
+  sWrapZh.className = 'canvas-wrap';
+  const sLabelZh = document.createElement('label');
+  sLabelZh.innerHTML = '440×280 <span class="lang-tag zh">中文</span>';
+  sWrapZh.appendChild(sLabelZh);
+  sWrapZh.appendChild(smallZh);
+  marqueeGrid.appendChild(sWrapZh);
+
+  const screenshotGrid = document.getElementById('screenshotGrid');
+  const screenshots = [
+    { id: 'ss-home', fn: drawScreenshotHome, label: 'Screenshot 1 — Home', lang: 'en' },
+    { id: 'ss-wordcount', fn: drawScreenshotWordCount, label: 'Screenshot 2 — Word Count', lang: 'en' },
+    { id: 'ss-markdown', fn: drawScreenshotMarkdown, label: 'Screenshot 3 — Markdown', lang: 'en' },
+    { id: 'ss-settings', fn: drawScreenshotSettings, label: 'Screenshot 4 — Settings', lang: 'en' },
+    { id: 'ss-home-zh', fn: drawScreenshotHomeZh, label: 'Screenshot 1 — 首页', lang: 'zh' },
+    { id: 'ss-wordcount-zh', fn: drawScreenshotWordCountZh, label: 'Screenshot 2 — 字数统计', lang: 'zh' },
+    { id: 'ss-markdown-zh', fn: drawScreenshotMarkdownZh, label: 'Screenshot 3 — Markdown导出', lang: 'zh' },
+    { id: 'ss-settings-zh', fn: drawScreenshotSettingsZh, label: 'Screenshot 4 — 设置', lang: 'zh' }
+  ];
+
+  screenshots.forEach(ss => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1280;
+    canvas.height = 800;
+    canvas.id = ss.id;
+    ss.fn(canvas.getContext('2d'), 1280, 800);
+    const wrap = document.createElement('div');
+    wrap.className = 'canvas-wrap';
+    const label = document.createElement('label');
+    const langTag = ss.lang === 'zh' ? '<span class="lang-tag zh">中文</span>' : '<span class="lang-tag en">EN</span>';
+    label.innerHTML = ss.label + ' ' + langTag;
+    wrap.appendChild(label);
+    wrap.appendChild(canvas);
+    screenshotGrid.appendChild(wrap);
+  });
+}
+
+// ==================== Download Functions ====================
+function downloadCanvas(canvas, filename) {
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function downloadAllIcons() {
+  [128, 48, 32, 16].forEach(size => {
+    const canvas = document.getElementById('icon-' + size);
+    downloadCanvas(canvas, 'icon' + size + '.png');
+  });
+}
+
+function downloadAllMarquees() {
+  downloadCanvas(document.getElementById('marquee-en'), 'marquee_1400x560_en.png');
+  downloadCanvas(document.getElementById('marquee-zh'), 'marquee_1400x560_zh.png');
+  downloadCanvas(document.getElementById('small-en'), 'small_tile_440x280_en.png');
+  downloadCanvas(document.getElementById('small-zh'), 'small_tile_440x280_zh.png');
+}
+
+function downloadAllScreenshots() {
+  const screenshots = [
+    { id: 'ss-home', name: 'screenshot_01_home_en.png' },
+    { id: 'ss-wordcount', name: 'screenshot_02_wordcount_en.png' },
+    { id: 'ss-markdown', name: 'screenshot_03_markdown_en.png' },
+    { id: 'ss-settings', name: 'screenshot_04_settings_en.png' },
+    { id: 'ss-home-zh', name: 'screenshot_01_home_zh.png' },
+    { id: 'ss-wordcount-zh', name: 'screenshot_02_wordcount_zh.png' },
+    { id: 'ss-markdown-zh', name: 'screenshot_03_markdown_zh.png' },
+    { id: 'ss-settings-zh', name: 'screenshot_04_settings_zh.png' }
+  ];
+  screenshots.forEach(ss => {
+    downloadCanvas(document.getElementById(ss.id), ss.name);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

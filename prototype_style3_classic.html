@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文本工具箱 - 经典标签式工作台</title>
+<style>
+  :root {
+    --bg: #f8f9fc;
+    --surface: #ffffff;
+    --text: #1e1f24;
+    --text-sec: #565869;
+    --text-muted: #8e8ea0;
+    --border: #e3e5ed;
+    --border-focus: #c5c9d6;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: #eff6ff;
+    --success: #16a34a;
+    --success-soft: #f0fdf4;
+    --warning: #d97706;
+    --warning-soft: #fffbeb;
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --purple: #7c3aed;
+    --purple-soft: #f5f3ff;
+    --radius: 8px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+    --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #e8ecf3;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+  .popup {
+    width: 380px; max-height: 520px;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04);
+    overflow: hidden; display: flex; flex-direction: column;
+    position: relative;
+  }
+
+  .header {
+    display: flex; align-items: center; padding: 12px 16px;
+    background: var(--surface); border-bottom: 2px solid var(--border);
+    gap: 8px; flex-shrink: 0;
+  }
+  .logo {
+    width: 30px; height: 30px; background: #2563eb;
+    border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: #fff;
+  }
+  .title { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+  .header-btn {
+    width: 30px; height: 30px; border-radius: var(--radius-sm);
+    background: transparent; border: 1px solid transparent; color: var(--text-muted);
+    cursor: pointer; font-size: 13px; transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .header-btn:hover { background: #f4f5f8; border-color: var(--border); color: var(--text); }
+
+  .tab-bar {
+    display: flex; background: #f4f5f8; border-bottom: 2px solid var(--border);
+    padding: 0 8px; flex-shrink: 0;
+  }
+  .tab {
+    padding: 10px 16px; border: none; background: none;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all var(--transition); color: var(--text-muted);
+    position: relative; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); background: rgba(37,99,235,0.04); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 10px; font-weight: 700; margin-left: 4px;
+  }
+
+  .content { flex: 1; overflow-y: auto; padding: 16px; }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+  .panel { display: none; flex-direction: column; gap: 14px; }
+  .panel.active { display: flex; }
+
+  .info-alert {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; border-radius: var(--radius);
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    font-size: 12px; color: var(--accent); line-height: 1.5;
+  }
+  .info-alert.warn { background: var(--warning-soft); border-left-color: var(--warning); color: var(--warning); }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .radio-group { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .radio-btn {
+    flex: 1; padding: 9px 14px; border: none; background: var(--surface);
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all var(--transition); color: var(--text-muted);
+    border-right: 1px solid var(--border);
+  }
+  .radio-btn:last-child { border-right: none; }
+  .radio-btn.active { background: var(--accent-soft); color: var(--accent); }
+
+  .btn {
+    padding: 10px 18px; border-radius: var(--radius);
+    border: 1px solid var(--border); font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: all var(--transition);
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; background: var(--surface); color: var(--text);
+  }
+  .btn:hover { background: #f4f5f8; border-color: var(--border-focus); }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    width: 100%; padding: 12px; background: var(--accent);
+    border-color: var(--accent); color: #fff;
+    box-shadow: var(--shadow); font-size: 13px;
+  }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-primary.loading { pointer-events: none; opacity: 0.75; }
+  .btn-success {
+    width: 100%; padding: 12px; background: var(--success);
+    border-color: var(--success); color: #fff;
+    font-size: 13px; box-shadow: var(--shadow);
+  }
+  .btn-success:hover { background: #15803d; }
+  .btn-success.loading { pointer-events: none; opacity: 0.75; }
+
+  .spinner {
+    width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.65s linear infinite; display: none;
+  }
+  .loading .spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .result-section {
+    display: none; flex-direction: column; gap: 12px;
+  }
+  .result-section.show { display: flex; }
+
+  .data-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .data-table th, .data-table td {
+    padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table th {
+    font-weight: 600; color: var(--text-muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    background: #fafbfc;
+  }
+  .data-table td { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+  .data-table tr:hover td { background: #fafbfc; }
+  .data-table .metric-name { font-weight: 500; color: var(--text-sec); }
+  .data-table .metric-count { text-align: right; }
+
+  .toolbar { display: flex; gap: 8px; }
+  .toolbar .btn { flex: 1; font-size: 11px; padding: 8px 12px; }
+
+  .toggle-field {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: #fafbfc;
+  }
+  .toggle-info .toggle-title { font-size: 12px; font-weight: 600; color: var(--text); }
+  .toggle-info .toggle-hint { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  .switch {
+    position: relative; width: 42px; height: 24px; flex-shrink: 0;
+  }
+  .switch input { display: none; }
+  .switch .track {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: #d1d5db; border-radius: 24px; transition: var(--transition); cursor: pointer;
+  }
+  .switch .track::after {
+    content: ""; position: absolute; width: 20px; height: 20px;
+    left: 2px; top: 2px; background: #fff; border-radius: 50%;
+    transition: var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .switch input:checked + .track { background: var(--accent); }
+  .switch input:checked + .track::after { transform: translateX(18px); }
+
+  .preview-box {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .preview-box-header {
+    display: flex; background: #fafbfc; border-bottom: 1px solid var(--border);
+  }
+  .preview-box-tab {
+    padding: 8px 14px; border: none; background: none;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    transition: all var(--transition); color: var(--text-muted);
+  }
+  .preview-box-tab.active {
+    color: var(--accent); background: var(--surface);
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+  .preview-box-body {
+    padding: 14px; font-size: 12px; line-height: 1.7;
+    color: var(--text-sec); max-height: 160px; overflow-y: auto;
+    font-family: "SF Mono", "Fira Code", monospace; background: #fff;
+  }
+  .preview-box-body.rendered { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  .action-bar { display: flex; gap: 10px; }
+  .action-bar .btn { flex: 1; }
+
+  .footer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px; border-top: 1px solid var(--border);
+    background: #fafbfc; font-size: 11px; color: var(--text-muted); flex-shrink: 0;
+  }
+  .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; }
+
+  .alert-toast {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    padding: 8px 18px; border-radius: 20px;
+    background: #1e1f24; color: #fff;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+    animation: toastIn 0.25s ease; z-index: 10;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+  .empty-hint {
+    padding: 28px; text-align: center; color: var(--text-muted);
+    border: 1px dashed var(--border); border-radius: var(--radius);
+    font-size: 12px; background: #fafbfc;
+  }
+  .empty-hint .empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.5; }
+
+  .suggestion-panel {
+    margin-top: 12px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: #fafbfc;
+  }
+  .suggestion-panel .suggestion-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .suggestion-panel .suggestion-desc { font-size: 10px; color: var(--text-muted); margin-bottom: 10px; }
+  .suggestion-panel textarea {
+    width: 100%; padding: 9px 11px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); font-size: 11px; font-family: inherit;
+    resize: none; height: 54px; transition: border-color var(--transition);
+  }
+  .suggestion-panel textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+  .suggestion-panel .suggestion-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .suggestion-panel .char-count { font-size: 10px; color: var(--text-muted); }
+  .suggestion-panel .char-count.warn { color: var(--danger); }
+  .suggestion-panel .submit-btn {
+    padding: 6px 16px; border-radius: var(--radius-sm); border: none;
+    background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: all var(--transition);
+  }
+  .suggestion-panel .submit-btn:hover { background: var(--accent-hover); }
+  .suggestion-panel .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .suggestion-panel .submit-btn.done { background: var(--success); }
+</style>
+</head>
+<body>
+
+<div class="popup" id="popup">
+  <div class="header">
+    <div class="logo">🔧</div>
+    <div class="title">文本工具箱</div>
+    <button class="header-btn">⚙</button>
+    <button class="header-btn">ⓘ</button>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" data-tab="home" onclick="switchTab('home', this)">🏠 首页</button>
+    <button class="tab" data-tab="wordcount" onclick="switchTab('wordcount', this)">📊 字数统计<span class="tab-badge">2</span></button>
+    <button class="tab" data-tab="markdown" onclick="switchTab('markdown', this)">📝 Markdown</button>
+  </div>
+
+  <div class="content">
+    <!-- HOME PANEL -->
+    <div class="panel active" id="panelHome">
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:40px;margin-bottom:8px">🧰</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">欢迎使用文本工具箱</div>
+        <div style="font-size:11px;color:var(--text-muted)">请通过顶部标签切换工具，或在下方快速启动</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <button class="btn" style="flex:1;flex-direction:column;padding:16px;gap:6px;border-color:var(--accent);background:var(--accent-soft)" onclick="switchTab('wordcount', document.querySelector('[data-tab=wordcount]'))">
+          <span style="font-size:22px">📊</span>
+          <span style="font-size:12px;font-weight:700;color:var(--accent)">字数统计</span>
+        </button>
+        <button class="btn" style="flex:1;flex-direction:column;padding:16px;gap:6px;border-color:var(--purple);background:var(--purple-soft)" onclick="switchTab('markdown', document.querySelector('[data-tab=markdown]'))">
+          <span style="font-size:22px">📝</span>
+          <span style="font-size:12px;font-weight:700;color:var(--purple)">Markdown</span>
+        </button>
+      </div>
+
+      <div class="empty-hint">
+        <div class="empty-icon">🔮</div>
+        <div style="font-weight:600;margin-bottom:4px">更多工具即将到来</div>
+        网页翻译 · 图片提取 · 链接提取 等
+      </div>
+
+      <div class="suggestion-panel">
+        <div class="suggestion-title">💡 需要更多工具？</div>
+        <div class="suggestion-desc">告诉我们您希望添加什么工具，我们将认真评估每一个建议</div>
+        <textarea id="suggestionInput3" placeholder="描述您需要的功能或工具…" maxlength="500" oninput="updateSuggestionCount3()"></textarea>
+        <div class="suggestion-row">
+          <span class="char-count"><span id="suggestionCount3">0</span>/500</span>
+          <button class="submit-btn" id="suggestionBtn3" onclick="submitSuggestion3()">提交建议</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORDCOUNT PANEL -->
+    <div class="panel" id="panelWordcount">
+      <div class="info-alert" id="wcAlert">📌 已检测到网页选中文本，将默认使用"选中统计"模式</div>
+
+      <div class="form-group">
+        <span class="form-label">统计模式</span>
+        <div class="radio-group">
+          <button class="radio-btn active" id="wcSel" onclick="setWcMode('selected')">选中文本</button>
+          <button class="radio-btn" id="wcFull" onclick="setWcMode('full')">全页面</button>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="wcBtn" onclick="doWordCount()">
+        <span class="spinner"></span>
+        <span class="btn-text">▶ 开始统计</span>
+      </button>
+
+      <div class="result-section" id="wcResult">
+        <table class="data-table">
+          <thead><tr><th>统计指标</th><th></th><th>数值</th></tr></thead>
+          <tbody>
+            <tr><td class="metric-name">中文字数</td><td style="width:60px"><div style="height:6px;border-radius:3px;background:var(--accent);width:85%"></div></td><td class="metric-count" id="cnCount">—</td></tr>
+            <tr><td class="metric-name">英文单词数</td><td><div style="height:6px;border-radius:3px;background:var(--purple);width:45%"></div></td><td class="metric-count" id="enCount">—</td></tr>
+            <tr><td class="metric-name">字符数(含空格)</td><td><div style="height:6px;border-radius:3px;background:var(--warning);width:92%"></div></td><td class="metric-count" id="charWith">—</td></tr>
+            <tr><td class="metric-name">字符数(无空格)</td><td><div style="height:6px;border-radius:3px;background:var(--success);width:80%"></div></td><td class="metric-count" id="charWithout">—</td></tr>
+            <tr><td class="metric-name">图片数量</td><td><div style="height:6px;border-radius:3px;background:#f59e0b;width:25%"></div></td><td class="metric-count" id="imgCount">—</td></tr>
+            <tr><td class="metric-name">视频数量</td><td><div style="height:6px;border-radius:3px;background:#ef4444;width:10%"></div></td><td class="metric-count" id="vidCount">—</td></tr>
+            <tr><td class="metric-name">链接数量</td><td><div style="height:6px;border-radius:3px;background:#8b5cf6;width:70%"></div></td><td class="metric-count" id="linkCount">—</td></tr>
+          </tbody>
+        </table>
+        <div class="toolbar">
+          <button class="btn" onclick="doWordCount()">🔄 重新统计</button>
+          <button class="btn" id="wcExportBtn" style="color:var(--accent);border-color:var(--accent)">📤 导出报告</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKDOWN PANEL -->
+    <div class="panel" id="panelMarkdown">
+      <div class="info-alert" id="mdAlert">📌 已检测到网页选中内容，将转换选中区域</div>
+
+      <div class="toggle-field">
+        <div class="toggle-info">
+          <div class="toggle-title">智能内容过滤</div>
+          <div class="toggle-hint">过滤广告、导航、侧边栏等干扰内容</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked id="filterToggle">
+          <span class="track"></span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <span class="form-label">转换范围</span>
+        <div class="radio-group">
+          <button class="radio-btn active" id="mdSel" onclick="setMdScope('selected')">选中内容</button>
+          <button class="radio-btn" id="mdArticle" onclick="setMdScope('article')">正文提取</button>
+        </div>
+      </div>
+
+      <button class="btn-success" id="mdBtn" onclick="doMarkdown()">
+        <span class="spinner"></span>
+        <span class="btn-text">▶ 开始转换</span>
+      </button>
+
+      <div class="result-section" id="mdResult">
+        <div class="preview-box">
+          <div class="preview-box-header">
+            <button class="preview-box-tab active" id="ptSrc" onclick="switchMdView('source')">📄 源码视图</button>
+            <button class="preview-box-tab" id="ptPrev" onclick="switchMdView('preview')">👁 预览视图</button>
+          </div>
+          <div class="preview-box-body" id="mdBody"></div>
+        </div>
+        <div class="action-bar">
+          <button class="btn" id="copyBtn" onclick="doCopy()">
+            <span>📋</span> 复制文本
+          </button>
+          <button class="btn" id="downloadBtn" onclick="doDownload()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+            <span>💾</span> 下载文件
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <span><span class="footer-dot"></span><span id="footerStatus">就绪</span></span>
+    <span id="footerTime"></span>
+  </div>
+</div>
+
+<script>
+  let wcMode = 'selected', mdScope = 'selected', mdView = 'source', activeTab = 'home';
+  const mockMd = `# 网页内容标题
+
+这是一段**粗体**文本和*斜体*文本，包含[链接](https://example.com)。
+
+## 二级标题
+- 列表项一
+- 列表项二
+- 列表项三
+
+| 列A | 列B |
+|-----|-----|
+| 数据1 | 数据2 |
+
+> 引用文本内容
+
+\`\`\`
+console.log("代码块示例");
+\`\`\``;
+
+  function switchTab(name, el) {
+    activeTab = name;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel' + capitalize(name)).classList.add('active');
+
+    const wr = document.getElementById('wcResult'), mr = document.getElementById('mdResult');
+    if (wr) wr.classList.remove('show');
+    if (mr) mr.classList.remove('show');
+    resetBtn('wcBtn', '▶ 开始统计');
+    resetBtn('mdBtn', '▶ 开始转换');
+    updateFooter('就绪', '');
+  }
+
+  function setWcMode(mode) {
+    wcMode = mode;
+    document.getElementById('wcSel').classList.toggle('active', mode === 'selected');
+    document.getElementById('wcFull').classList.toggle('active', mode === 'full');
+    document.getElementById('wcAlert').textContent = mode === 'selected' ? '📌 已检测到网页选中文本，将默认使用"选中统计"模式' : '📄 全页面统计模式 · 统计当前页面全部文本和媒体元素';
+    document.getElementById('wcResult').classList.remove('show');
+    resetBtn('wcBtn', '▶ 开始统计');
+  }
+
+  function setMdScope(scope) {
+    mdScope = scope;
+    document.getElementById('mdSel').classList.toggle('active', scope === 'selected');
+    document.getElementById('mdArticle').classList.toggle('active', scope === 'article');
+    document.getElementById('mdAlert').textContent = scope === 'selected' ? '📌 已检测到网页选中内容，将转换选中区域' : '📄 智能提取页面正文 · 自动过滤非核心元素';
+    document.getElementById('mdResult').classList.remove('show');
+    resetBtn('mdBtn', '▶ 开始转换');
+  }
+
+  function doWordCount() {
+    const btn = document.getElementById('wcBtn');
+    const res = document.getElementById('wcResult');
+    res.classList.remove('show');
+    btn.classList.add('loading');
+    btn.querySelector('.btn-text').textContent = '统计中…';
+    updateFooter('正在分析… ⏳', '');
+    setTimeout(() => {
+      document.getElementById('cnCount').textContent = '1,234';
+      document.getElementById('enCount').textContent = '567';
+      document.getElementById('charWith').textContent = '2,345';
+      document.getElementById('charWithout').textContent = '2,100';
+      document.getElementById('imgCount').textContent = '5';
+      document.getElementById('vidCount').textContent = '2';
+      document.getElementById('linkCount').textContent = '23';
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-text').textContent = '▶ 开始统计';
+      res.classList.add('show');
+      updateFooter('就绪', '统计耗时 105ms');
+    }, 800);
+  }
+
+  function doMarkdown() {
+    const btn = document.getElementById('mdBtn');
+    const res = document.getElementById('mdResult');
+    res.classList.remove('show');
+    btn.classList.add('loading');
+    btn.querySelector('.btn-text').textContent = '转换中…';
+    updateFooter('HTML → Markdown 转换中… ⏳', '');
+    document.getElementById('mdBody').textContent = mockMd;
+    document.getElementById('mdBody').className = 'preview-box-body';
+    document.getElementById('ptSrc').classList.add('active');
+    document.getElementById('ptPrev').classList.remove('active');
+    mdView = 'source';
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-text').textContent = '▶ 开始转换';
+      res.classList.add('show');
+      updateFooter('就绪', '转换耗时 140ms');
+    }, 600);
+  }
+
+  function switchMdView(view) {
+    mdView = view;
+    document.getElementById('ptSrc').classList.toggle('active', view === 'source');
+    document.getElementById('ptPrev').classList.toggle('active', view === 'preview');
+    const body = document.getElementById('mdBody');
+    if (view === 'source') {
+      body.textContent = mockMd;
+      body.className = 'preview-box-body';
+    } else {
+      body.innerHTML = '<h1 style="font-size:15px;margin-bottom:6px;color:#1e1f24">网页内容标题</h1><p style="margin-bottom:6px">这是一段<strong>粗体</strong>文本和<em>斜体</em>文本，包含<a href="#" style="color:#2563eb">链接</a>。</p><h2 style="font-size:13px;margin-top:10px;color:#1e1f24">二级标题</h2><ul style="padding-left:18px;margin:6px 0"><li>列表项一</li><li>列表项二</li><li>列表项三</li></ul><table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:11px"><tr><th style="border:1px solid #e3e5ed;padding:4px 8px;background:#fafbfc">列A</th><th style="border:1px solid #e3e5ed;padding:4px 8px;background:#fafbfc">列B</th></tr><tr><td style="border:1px solid #e3e5ed;padding:4px 8px">数据1</td><td style="border:1px solid #e3e5ed;padding:4px 8px">数据2</td></tr></table><blockquote style="border-left:3px solid #2563eb;padding:4px 12px;margin:8px 0;color:#565869;background:#eff6ff;border-radius:0 6px 6px 0">引用文本内容</blockquote><pre style="background:#f4f5f8;padding:8px 12px;border-radius:6px;font-size:11px;color:#2563eb;overflow-x:auto">console.log("代码块示例");</pre>';
+      body.className = 'preview-box-body rendered';
+    }
+  }
+
+  function doCopy() {
+    const btn = document.getElementById('copyBtn');
+    btn.innerHTML = '<span>✅</span> 已复制';
+    btn.style.background = '#f0fdf4'; btn.style.borderColor = '#16a34a'; btn.style.color = '#16a34a';
+    updateFooter('已复制到剪贴板', '');
+    setTimeout(() => { btn.innerHTML = '<span>📋</span> 复制文本'; btn.style = ''; }, 1600);
+  }
+
+  function doDownload() {
+    const btn = document.getElementById('downloadBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<span>⏳</span> 下载中…';
+    setTimeout(() => { btn.innerHTML = orig; showToast('✅ 文件已开始下载 · 示例文章_20260514_153022.md'); updateFooter('就绪', '文件已保存'); }, 300);
+  }
+
+  function showToast(msg) {
+    const old = document.querySelector('.alert-toast'); if (old) old.remove();
+    const t = document.createElement('div'); t.className = 'alert-toast'; t.textContent = msg;
+    document.getElementById('popup').appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+
+  function updateFooter(status, time) {
+    document.getElementById('footerStatus').textContent = status;
+    document.getElementById('footerTime').textContent = time;
+  }
+
+  function resetBtn(id, text) {
+    const btn = document.getElementById(id); if (!btn) return;
+    btn.classList.remove('loading');
+    const bt = btn.querySelector('.btn-text'); if (bt) bt.textContent = text;
+  }
+
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function updateSuggestionCount3() {
+    const input = document.getElementById('suggestionInput3');
+    const count = document.getElementById('suggestionCount3');
+    const len = input.value.length;
+    count.textContent = len;
+    count.parentElement.classList.toggle('warn', len >= 450);
+  }
+
+  function submitSuggestion3() {
+    const input = document.getElementById('suggestionInput3');
+    const btn = document.getElementById('suggestionBtn3');
+    if (!input.value.trim()) return;
+    btn.textContent = '提交中…';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = '已收到 ✓';
+      btn.classList.add('done');
+      input.value = '';
+      updateSuggestionCount3();
+      showToast('💡 感谢您的建议！我们会认真评估');
+      setTimeout(() => {
+        btn.textContent = '提交建议';
+        btn.classList.remove('done');
+      }, 2500);
+    }, 500);
+  }
+</script>
+</body>
+</html>
