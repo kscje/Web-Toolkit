@@ -1057,11 +1057,25 @@
     });
   }
 
+  function syncToolCardVisibility() {
+    return StorageManager.get(StorageManager.KEYS.TOOL_STATES).then(function (states) {
+      states = states || StorageManager.DEFAULTS.tool_states;
+      var cards = $$('.tool-card[data-tool]');
+      cards.forEach(function (card) {
+        var toolId = card.getAttribute('data-tool');
+        var enabled = states[toolId] !== false;
+        card.style.display = enabled ? '' : 'none';
+      });
+    });
+  }
+
   function init() {
     cacheDOM();
     homeViewInit();
     settingsInit();
     headerInit();
+
+    syncToolCardVisibility();
 
     I18n.onChange(function () {
       refreshAllDynamicText();

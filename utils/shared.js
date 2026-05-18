@@ -202,6 +202,10 @@ var StorageManager = (function () {
     });
   }
 
+  function setAllToolStates(states) {
+    return set(KEYS.TOOL_STATES, states);
+  }
+
   function getUserPreferences() {
     return get(KEYS.USER_PREFERENCES);
   }
@@ -222,6 +226,7 @@ var StorageManager = (function () {
     getSuggestions: getSuggestions,
     getToolState: getToolState,
     setToolState: setToolState,
+    setAllToolStates: setAllToolStates,
     getUserPreferences: getUserPreferences,
     setUserPreference: setUserPreference,
     KEYS: KEYS,

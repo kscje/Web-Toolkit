@@ -39,10 +39,6 @@
     return StorageManager.getToolState(featureId);
   }
 
-  function setFeatureState(featureId, enabled) {
-    return StorageManager.setToolState(featureId, enabled);
-  }
-
   function getFeatureOrder() {
     return ConfigManager.get('feature_block_order').then(function (order) {
       if (order && Array.isArray(order) && order.length === FEATURE_BLOCKS.length) {
@@ -206,15 +202,14 @@
     btn.classList.add('saving');
     btn.textContent = '⏳ ' + I18n.t('settings.saving');
 
-    var savePromises = [];
-
+    var allStates = {};
     FEATURE_BLOCKS.forEach(function (block) {
-      savePromises.push(setFeatureState(block.id, featureStates[block.id] !== false));
+      allStates[block.id] = featureStates[block.id] !== false;
     });
 
-    savePromises.push(setFeatureOrder(featureOrder));
-
-    return Promise.all(savePromises).then(function () {
+    return StorageManager.setAllToolStates(allStates).then(function () {
+      return setFeatureOrder(featureOrder);
+    }).then(function () {
       isDirty = false;
       updateSaveStatus();
       btn.classList.remove('saving');
@@ -311,11 +306,21 @@
       });
 
       $('#btnSave').addEventListener('click', function () {
-        saveAllSettings().then(function () {
-          showToast('✓ ' + I18n.t('settings.saved_toast'));
-        }).catch(function () {
+        try {
+          saveAllSettings().then(function () {
+            showToast('✓ ' + I18n.t('settings.saved_toast'));
+          }).catch(function () {
+            showToast('✗ ' + I18n.t('settings.save_failed'));
+            var btn = $('#btnSave');
+            btn.classList.remove('saving');
+            btn.textContent = '💾 ' + I18n.t('settings.save_settings');
+          });
+        } catch (e) {
           showToast('✗ ' + I18n.t('settings.save_failed'));
-        });
+          var btn = $('#btnSave');
+          btn.classList.remove('saving');
+          btn.textContent = '💾 ' + I18n.t('settings.save_settings');
+        }
       });
     });
   }
