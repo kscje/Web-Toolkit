@@ -128,7 +128,7 @@ TextFlow/
 {
   "manifest_version": 3,
   "permissions": ["activeTab", "storage", "clipboardWrite", "contextMenus"],
-  "host_permissions": ["https://textflow-suggestions.textflow-sug.workers.dev/"],
+  "host_permissions": ["https://textflow-suggestions.kscje-apps.workers.dev/"],
   "background": { "service_worker": "background.js" },
   "content_scripts": [{ "matches": ["<all_urls>"], "js": ["content.js"], "run_at": "document_idle" }],
   "action": { "default_popup": "popup.html" },

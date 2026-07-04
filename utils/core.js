@@ -237,8 +237,8 @@ var StorageManager = (function () {
 var SuggestionTool = (function () {
   'use strict';
 
-  var REMOTE_URL = 'https://textflow-suggestions.webtoolkit-sug.workers.dev/api/suggestions';
-  var API_BASE = 'https://textflow-suggestions.webtoolkit-sug.workers.dev/api';
+  var REMOTE_URL = 'https://textflow-suggestions.kscje-apps.workers.dev/api/suggestions';
+  var API_BASE = 'https://textflow-suggestions.kscje-apps.workers.dev/api';
 
   function isRuntimeAvailable() {
     return typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage;
