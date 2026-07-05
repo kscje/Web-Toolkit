@@ -290,7 +290,7 @@
     (function () {
       'use strict';
 
-      var API_URL = 'https://textflow-suggestions.kscje-apps.workers.dev/api/suggestions';
+      var API_URL = window.location.origin + '/api/suggestions';
       var TOKEN_KEY = 'wt_admin_token';
 
       var app = document.getElementById('app');
