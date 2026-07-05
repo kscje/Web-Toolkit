@@ -95,8 +95,21 @@ var WordCountTool = (function () {
     return Promise.resolve(result);
   }
 
+  function executeManual(text) {
+    var result = analyzeWordText(text || '');
+    result.mode = 'manual';
+    _currentResult = result;
+    _currentMode = 'manual';
+    notifyListeners(result);
+    return Promise.resolve(result);
+  }
+
   function execute(mode) {
     if (typeof mode === 'undefined') mode = _currentMode || 'selected';
+
+    if (mode === 'manual') {
+      return executeManual('');
+    }
 
     if (!TextFlow.isChromeExtension()) {
       return executeLocal('This is sample text for local testing. Hello World! It contains both Chinese and English content. 中英文混合内容测试。\n\nSecond paragraph with more test data. 第二段落，包含更多测试数据。');
@@ -174,6 +187,7 @@ var WordCountTool = (function () {
 
   return {
     execute: execute,
+    executeManual: executeManual,
     executeLocal: executeLocal,
     getResult: getResult,
     setMode: setMode,

@@ -21,10 +21,12 @@
   "tools": {
     "wordcount": {
       "name": "字数统计",
-      "desc": "统计中/英文字数、段落数，支持选中和全页模式",
+      "desc": "统计中/英文字数、段落数，支持选中、手动和全页模式",
       "title": "📊 字数统计",
       "mode_selected": "选中内容",
+      "mode_manual": "手动输入",
       "mode_full": "整个页面",
+      "placeholder_input": "请输入或粘贴要统计的文本…",
       "status_loading": "正在统计…",
       "stat_total_chars": "总字符数",
       "stat_chars_no_space": "不含空格",
@@ -37,6 +39,7 @@
       "stat_links": "链接数",
       "status_counting": "正在统计…",
       "status_done_full": "统计完成 (全页)",
+      "status_done_manual": "统计完成 (手动)",
       "status_done_selected": "统计完成 (选中)",
       "status_failed": "统计失败",
       "error_failed": "统计失败"

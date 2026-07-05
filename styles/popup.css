@@ -334,10 +334,45 @@ body {
 	  box-shadow: 0 2px 8px rgba(67,97,238,0.1);
 	}
 
-	.mode-pill:disabled {
+.mode-pill:disabled {
 	  opacity: 0.45;
 	  cursor: default;
 	}
+
+.manual-input-panel {
+  margin-bottom: 14px;
+}
+
+.manual-input-panel textarea {
+  width: 100%;
+  min-height: 120px;
+  max-height: 180px;
+  resize: vertical;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: #fafbfc;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 12px;
+  outline: none;
+  transition: all var(--transition);
+}
+
+.manual-input-panel textarea:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.08);
+}
+
+.manual-char-count {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 
 .btn-primary {
   width: 100%;

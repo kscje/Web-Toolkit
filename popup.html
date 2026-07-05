@@ -180,7 +180,13 @@
 
         <div class="mode-pills">
           <button class="mode-pill active" data-mode="selected" data-i18n="tools.wordcount.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.wordcount.mode_manual">手动输入</button>
           <button class="mode-pill" data-mode="full" data-i18n="tools.wordcount.mode_full">整个页面</button>
+        </div>
+
+        <div class="manual-input-panel" id="wcManualPanel" style="display:none;">
+          <textarea id="wcManualInput" data-i18n-placeholder="tools.wordcount.placeholder_input" placeholder="请输入或粘贴要统计的文本…"></textarea>
+          <div class="manual-char-count" id="wcManualCharCount">0</div>
         </div>
 
         <div class="result-area show" id="wcResultArea">

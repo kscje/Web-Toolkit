@@ -86,6 +86,9 @@
     dom.toast = $('#toast');
     dom.wcResultArea = $('#wcResultArea');
     dom.wcPageExtras = $('#wcPageExtras');
+    dom.wcManualPanel = $('#wcManualPanel');
+    dom.wcManualInput = $('#wcManualInput');
+    dom.wcManualCharCount = $('#wcManualCharCount');
     dom.mdResultArea = $('#mdResultArea');
     dom.mdPreview = $('#mdPreview');
     dom.mdNoSelectionBanner = $('#mdNoSelectionBanner');
@@ -302,6 +305,7 @@
     $('#cardWordCount').addEventListener('click', function () {
       showView('wordcount');
       document.querySelector('#viewWordCount .mode-pill[data-mode="selected"]').classList.add('active');
+      document.querySelector('#viewWordCount .mode-pill[data-mode="manual"]').classList.remove('active');
       document.querySelector('#viewWordCount .mode-pill[data-mode="full"]').classList.remove('active');
       wcMode = 'selected';
 
@@ -413,7 +417,11 @@
   function executeWordCount() {
     setStatus(I18n.t('tools.wordcount.status_loading'));
 
-    WordCountTool.execute(wcMode).then(function (result) {
+    var run = wcMode === 'manual'
+      ? WordCountTool.executeManual(dom.wcManualInput ? dom.wcManualInput.value : '')
+      : WordCountTool.execute(wcMode);
+
+    run.then(function (result) {
       $('#wcTotalChars').textContent = WordCountTool.formatCount(result.totalChars);
       $('#wcCharsNoSpace').textContent = WordCountTool.formatCount(result.charsNoSpaces);
       $('#wcChinese').textContent = WordCountTool.formatCount(result.chineseChars);
@@ -431,7 +439,9 @@
       $('#wcParagraphs').textContent = WordCountTool.formatCount(result.paragraphs);
       $('#wcSentences').textContent = WordCountTool.formatCount(result.sentences);
 
-      var statusKey = result.mode === 'full' ? 'tools.wordcount.status_done_full' : 'tools.wordcount.status_done_selected';
+      var statusKey = result.mode === 'full'
+        ? 'tools.wordcount.status_done_full'
+        : (result.mode === 'manual' ? 'tools.wordcount.status_done_manual' : 'tools.wordcount.status_done_selected');
       setStatus(I18n.t(statusKey));
     }).catch(function (err) {
       showToast(I18n.t('tools.wordcount.error_failed') + ': ' + err.message);
@@ -440,7 +450,19 @@
   }
 
   var _wcEventsBound = false;
+  function updateWordCountModeUI() {
+    if (dom.wcManualPanel) {
+      dom.wcManualPanel.style.display = wcMode === 'manual' ? '' : 'none';
+    }
+    if (wcMode === 'manual' && dom.wcManualInput) {
+      dom.wcManualCharCount.textContent = WordCountTool.formatCount(dom.wcManualInput.value.length);
+      dom.wcManualInput.focus();
+    }
+  }
+
   function wordCountViewInit() {
+    updateWordCountModeUI();
+
     if (!_wcEventsBound) {
       _wcEventsBound = true;
       $$('#viewWordCount .mode-pill').forEach(function (pill) {
@@ -449,9 +471,18 @@
           pill.classList.add('active');
           wcMode = pill.dataset.mode;
           WordCountTool.setMode(wcMode);
+          updateWordCountModeUI();
           executeWordCount();
         });
       });
+
+      if (dom.wcManualInput) {
+        dom.wcManualInput.addEventListener('input', function () {
+          if (wcMode !== 'manual') return;
+          dom.wcManualCharCount.textContent = WordCountTool.formatCount(this.value.length);
+          executeWordCount();
+        });
+      }
     }
 
     executeWordCount();

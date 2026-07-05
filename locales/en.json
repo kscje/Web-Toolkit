@@ -21,10 +21,12 @@
   "tools": {
     "wordcount": {
       "name": "Word Count",
-      "desc": "Count Chinese/English characters, paragraphs. Supports selection and full page modes",
+      "desc": "Count Chinese/English characters, paragraphs. Supports selection, manual input and full page modes",
       "title": "📊 Word Count",
       "mode_selected": "Selection",
+      "mode_manual": "Manual Input",
       "mode_full": "Full Page",
+      "placeholder_input": "Type or paste text to count…",
       "status_loading": "Counting…",
       "stat_total_chars": "Total Characters",
       "stat_chars_no_space": "No Spaces",
@@ -37,6 +39,7 @@
       "stat_links": "Links",
       "status_counting": "Counting…",
       "status_done_full": "Counting complete (Full Page)",
+      "status_done_manual": "Counting complete (Manual)",
       "status_done_selected": "Counting complete (Selection)",
       "status_failed": "Counting failed",
       "error_failed": "Counting failed"
