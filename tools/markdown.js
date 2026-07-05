@@ -257,7 +257,7 @@ var MarkdownTool = (function () {
     if (rows.length === 0) return '';
 
     var md = '\n| ' + rows[0].join(' | ') + ' |\n';
-    md += '| ' + rows[0].map(function () { return '---'; }).join(' | ') + ' |\n';
+    md += '|' + rows[0].map(function () { return '---'; }).join('|') + '|\n';
     for (var r = 1; r < rows.length; r++) {
       md += '| ' + rows[r].join(' | ') + ' |\n';
     }
@@ -274,17 +274,19 @@ var MarkdownTool = (function () {
         continue;
       }
       if (!inCodeBlock) {
-        lines[i] = lines[i].replace(/^\s+/, '');
+        if (!/^\s+([-*+]|\d+\.)\s/.test(lines[i])) {
+          lines[i] = lines[i].replace(/^\s+/, '');
+        }
       }
     }
     return lines.join('\n');
   }
 
   function execute(mode) {
-    mode = 'selected';
+    mode = mode === 'full' ? 'full' : 'selected';
 
     if (!TextFlow.isChromeExtension()) {
-      return executeLocal();
+      return executeLocal(mode);
     }
 
     return new Promise(function (resolve, reject) {
@@ -302,7 +304,7 @@ var MarkdownTool = (function () {
 
         chrome.tabs.sendMessage(tab.id, {
           action: 'saveMarkdown',
-          payload: { mode: 'selected' },
+          payload: { mode: mode },
           requestId: 'md_' + Date.now()
         }, function (response) {
           if (chrome.runtime.lastError) {
@@ -320,7 +322,8 @@ var MarkdownTool = (function () {
             markdown: markdown,
             pageTitle: data.pageTitle,
             pageURL: data.pageURL,
-            mode: data.mode
+            mode: data.mode,
+            isShortContent: data.isShortContent === true
           };
           _currentMode = mode;
           notifyListeners(_currentData);
@@ -330,7 +333,8 @@ var MarkdownTool = (function () {
     });
   }
 
-  function executeLocal() {
+  function executeLocal(mode) {
+    mode = mode === 'full' ? 'full' : 'selected';
     var sampleHTML = '<h1>Sample Title</h1><p>This is <b>bold</b> text, and this is <i>italic</i> text.</p><p>Contains a <a href="https://example.com">link</a>.</p><ul><li>Item one</li><li>Item two</li></ul><pre><code>console.log("Hello");</code></pre>';
     var markdown = convertHTMLToMarkdown(sampleHTML);
     _currentData = {
@@ -338,9 +342,10 @@ var MarkdownTool = (function () {
       markdown: markdown,
       pageTitle: _('errors.local_test', 'Local Test'),
       pageURL: 'http://localhost/test',
-      mode: 'local'
+      mode: mode,
+      isShortContent: false
     };
-    _currentMode = 'selected';
+    _currentMode = mode;
     notifyListeners(_currentData);
     return Promise.resolve(_currentData);
   }

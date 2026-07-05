@@ -236,6 +236,11 @@
 
       <div class="view" id="viewMarkdown">
 
+        <div class="mode-pills">
+          <button class="mode-pill active" data-mode="selected" data-i18n="tools.markdown.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="full" data-i18n="tools.markdown.mode_full">整个页面</button>
+        </div>
+
         <div class="toggle-row">
           <div>
             <div class="toggle-label" data-i18n="tools.markdown.option_preserve_indent">保留段首缩进</div>
@@ -256,6 +261,8 @@
         </div>
 
         <div class="result-area show" id="mdResultArea">
+          <div class="markdown-source-tag" id="mdSourceTag" data-i18n="tools.markdown.tag_selected">📄 选中内容</div>
+
           <div class="preview-panel">
             <div class="preview-header">
               <button class="preview-tab active" data-tab="source" data-i18n="tools.markdown.tab_source">源码</button>

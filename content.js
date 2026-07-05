@@ -79,13 +79,18 @@
 
   function getFullPageHTML() {
     const clone = document.body.cloneNode(true);
+    removeFilteredContent(clone);
+    return clone.innerHTML;
+  }
+
+  function removeFilteredContent(root) {
+    if (!root) return;
     CONTENT_FILTER_SELECTORS.forEach(function (selector) {
       try {
-        const elements = clone.querySelectorAll(selector);
+        const elements = root.querySelectorAll(selector);
         elements.forEach(function (el) { el.remove(); });
       } catch (e) {}
     });
-    return clone.innerHTML;
   }
 
   function countPageImages() {
@@ -141,17 +146,36 @@
 
   function getPageMainContentHTML() {
     const selectors = ['article', 'main', '[role="main"]', '.post-content', '.article-content', '.entry-content', '#content', '.content'];
+    let best = null;
+    let bestLength = 0;
     for (let i = 0; i < selectors.length; i++) {
-      const el = document.querySelector(selectors[i]);
-      if (el && el.textContent.trim().length > 100) {
-        const clone = el.cloneNode(true);
-        CONTENT_FILTER_SELECTORS.forEach(function (s) {
-          try {
-            clone.querySelectorAll(s).forEach(function (child) { child.remove(); });
-          } catch (e) {}
-        });
-        return clone.innerHTML;
-      }
+      const matches = document.querySelectorAll(selectors[i]);
+      matches.forEach(function (el) {
+        if (!isElementVisible(el)) return;
+        const textLength = (el.textContent || '').trim().length;
+        if (textLength > bestLength) {
+          best = el;
+          bestLength = textLength;
+        }
+      });
+    }
+
+    if (!best || bestLength < 100) {
+      const blockCandidates = document.querySelectorAll('article, main, section, [role="main"], div');
+      blockCandidates.forEach(function (el) {
+        if (!isElementVisible(el)) return;
+        const textLength = (el.textContent || '').trim().length;
+        if (textLength > bestLength && textLength < (document.body.textContent || '').length * 0.95) {
+          best = el;
+          bestLength = textLength;
+        }
+      });
+    }
+
+    if (best && bestLength >= 100) {
+      const clone = best.cloneNode(true);
+      removeFilteredContent(clone);
+      return clone.innerHTML;
     }
     return getFullPageHTML();
   }
@@ -238,10 +262,11 @@
       }
 
       case 'saveMarkdown': {
+        const mdMode = payload.mode === 'full' ? 'full' : 'selected';
         const selectedHTML = getSelectedHTML();
         const hasSelection = selectedHTML !== null && selectedHTML.trim().length > 0;
 
-        if (!hasSelection) {
+        if (mdMode === 'selected' && !hasSelection) {
           sendResponse({
             success: false,
             error: 'No content selected. Please select content on the page first.',
@@ -250,15 +275,18 @@
           break;
         }
 
-        const htmlContent = resolveImageURLs(selectedHTML);
+        const sourceHTML = mdMode === 'full' ? getPageMainContentHTML() : selectedHTML;
+        const htmlContent = resolveImageURLs(sourceHTML);
+        const textLength = stripHTMLToText(htmlContent).trim().length;
 
         sendResponse({
           success: true,
           data: {
             html: htmlContent,
-            mode: 'selected',
+            mode: mdMode,
             pageTitle: getPageTitle(),
-            pageURL: getPageURL()
+            pageURL: getPageURL(),
+            isShortContent: mdMode === 'full' && textLength > 0 && textLength < 50
           },
           requestId: request.requestId
         });

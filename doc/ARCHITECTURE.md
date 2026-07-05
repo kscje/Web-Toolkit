@@ -234,7 +234,7 @@ function sendToContent(action, payload) {
 | `getSelection` | 获取选中文本和 HTML | `{ hasSelection, text, html }` |
 | `getPageInfo` | 获取页面标题和 URL | `{ title, url }` |
 | `wordCount` | 执行字数统计 (选中/全页) | `{ charWithSpaces, charWithoutSpaces, chineseCount, englishWordCount, paragraphCount, imageCount, videoCount, linkCount, mode }` |
-| `saveMarkdown` | 返回选中 HTML (含已解析图片URL) | `{ html, mode, pageTitle, pageURL }` |
+| `saveMarkdown` | 返回选中 HTML 或智能提取的页面主体 HTML (含已解析图片URL) | `{ html, mode, pageTitle, pageURL, isShortContent }` |
 | `extractPlainText` | 从 HTML 提取纯文本 | `{ text, mode, pageTitle, pageURL }` |
 
 **核心内部函数：**
@@ -389,7 +389,8 @@ convertHTMLToMarkdown(html)
   markdown: string,    // 转换后的 Markdown
   pageTitle: string,   // 网页标题
   pageURL: string,     // 网页 URL
-  mode: 'selected' | 'local'
+  mode: 'selected' | 'full' | 'local',
+  isShortContent: boolean
 }
 ```
 
@@ -631,7 +632,7 @@ chrome.tabs.sendMessage(tabId, { action, payload, requestId })
 content.js: chrome.runtime.onMessage 监听
     │
     ├── action='wordCount'       → analyzeSelectedText() / analyzeFullPage()
-    ├── action='saveMarkdown'    → getSelectedHTML() + resolveImageURLs()
+    ├── action='saveMarkdown'    → getSelectedHTML() / getPageMainContentHTML() + resolveImageURLs()
     └── action='extractPlainText' → getPageMainContentHTML() + stripHTMLToText()
     │
     ▼
@@ -1043,7 +1044,7 @@ case 'newToolAction': {
 2. **无 TypeScript**：全部为 ES5 兼容的 JavaScript (var 声明为主)
 3. **无模块系统**：通过全局变量 (window.XXX) 共享模块，需注意加载顺序
 4. **双重存储兼容**：所有存储/配置模块都实现了 `isChromeExtension()` 判断，支持扩展环境和本地开发
-5. **Markdown 仅支持选中模式**：`markdown.js` 的 `execute()` 强制设为 `'selected'`，全页模式待实现
+5. **Markdown 支持选中/全页模式**：有选区时默认导出选中内容，无选区时默认智能提取页面主体并过滤导航、广告、页脚等干扰内容
 6. **预加载策略**：popup 打开 100ms 后自动预加载所有 8 个工具模块
 7. **建议提交 Token**：`utils/core.js` 中的 `SUBMIT_TOKEN` 与 `backend/worker.js` 环境变量需保持一致
 8. **第三方库懒加载**：`libs/qrcode.min.js` 仅在首次使用二维码工具时加载，需确保网络可用

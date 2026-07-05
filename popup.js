@@ -3,6 +3,7 @@
 
   var currentView = 'home';
   var wcMode = 'selected';
+  var mdMode = 'selected';
   var ptMode = 'selected';
   var toastTimer = null;
   var dom = {};
@@ -92,6 +93,7 @@
     dom.mdResultArea = $('#mdResultArea');
     dom.mdPreview = $('#mdPreview');
     dom.mdNoSelectionBanner = $('#mdNoSelectionBanner');
+    dom.mdSourceTag = $('#mdSourceTag');
     dom.ptResultArea = $('#ptResultArea');
     dom.ptPreview = $('#ptPreview');
     dom.ptManualPanel = $('#ptManualPanel');
@@ -497,9 +499,25 @@
       _mdEventsBound = true;
       $('#mdPreserveIndentToggle').addEventListener('change', function () {
         MarkdownTool.setPreserveIndent(this.checked);
-        if (dom.mdNoSelectionBanner.style.display === 'none') {
+        if (mdMode === 'full' || dom.mdNoSelectionBanner.style.display === 'none') {
           executeMarkdown();
         }
+      });
+
+      $$('#viewMarkdown .mode-pill').forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          $$('#viewMarkdown .mode-pill').forEach(function (p) { p.classList.remove('active'); });
+          pill.classList.add('active');
+          mdMode = pill.dataset.mode;
+          MarkdownTool.setMode(mdMode);
+          if (mdMode === 'full') {
+            dom.mdNoSelectionBanner.style.display = 'none';
+            dom.mdResultArea.classList.add('show');
+            executeMarkdown();
+          } else {
+            checkSelectionAndExecute(false);
+          }
+        });
       });
 
       $$('#viewMarkdown .preview-tab').forEach(function (tab) {
@@ -562,24 +580,44 @@
     function executeMarkdown() {
       setStatus(I18n.t('tools.markdown.status_converting'));
 
-      MarkdownTool.execute('selected').then(function (data) {
+      MarkdownTool.execute(mdMode).then(function (data) {
         dom.mdPreview.textContent = data.markdown;
         dom.mdPreview.classList.remove('rendered');
+        updateMarkdownSourceTag(data.mode === 'full' ? 'full' : mdMode);
 
         $('#viewMarkdown .preview-tab[data-tab="source"]').classList.add('active');
         $('#viewMarkdown .preview-tab[data-tab="rendered"]').classList.remove('active');
 
         setStatus(I18n.t('tools.markdown.status_done'));
+        if (data.isShortContent) {
+          showToast(I18n.t('tools.markdown.toast_short_content'));
+        }
       }).catch(function (err) {
         showToast(I18n.t('tools.markdown.error_failed') + ': ' + err.message);
         setStatus(I18n.t('tools.markdown.status_failed'));
       });
     }
 
-    function checkSelectionAndExecute() {
+    function setMarkdownMode(mode) {
+      mdMode = mode;
+      MarkdownTool.setMode(mdMode);
+      $$('#viewMarkdown .mode-pill').forEach(function (pill) {
+        pill.classList.toggle('active', pill.dataset.mode === mode);
+      });
+    }
+
+    function updateMarkdownSourceTag(mode) {
+      if (!dom.mdSourceTag) return;
+      var key = mode === 'full' ? 'tools.markdown.tag_full' : 'tools.markdown.tag_selected';
+      dom.mdSourceTag.textContent = I18n.t(key);
+    }
+
+    function checkSelectionAndExecute(allowAutoFull) {
+      allowAutoFull = allowAutoFull !== false;
       if (TextFlow.isChromeExtension()) {
         var cache = getSelectionCache();
         if (cache.hasSelection) {
+          setMarkdownMode('selected');
           dom.mdNoSelectionBanner.style.display = 'none';
           dom.mdResultArea.classList.add('show');
           executeMarkdown();
@@ -589,28 +627,38 @@
               _selectionCache.hasSelection = true;
               _selectionCache.text = resp.data.text || '';
               _selectionCache.html = resp.data.html || '';
+              setMarkdownMode('selected');
               dom.mdNoSelectionBanner.style.display = 'none';
               dom.mdResultArea.classList.add('show');
               executeMarkdown();
             } else {
-              dom.mdNoSelectionBanner.style.display = 'flex';
-              dom.mdResultArea.classList.remove('show');
-              setStatus(I18n.t('tools.markdown.status_no_selection'));
+              if (allowAutoFull) {
+                setMarkdownMode('full');
+                dom.mdNoSelectionBanner.style.display = 'none';
+                dom.mdResultArea.classList.add('show');
+                executeMarkdown();
+              } else {
+                dom.mdNoSelectionBanner.style.display = 'flex';
+                dom.mdResultArea.classList.remove('show');
+                setStatus(I18n.t('tools.markdown.status_no_selection'));
+              }
             }
           }).catch(function () {
+            setMarkdownMode('full');
             dom.mdNoSelectionBanner.style.display = 'none';
             dom.mdResultArea.classList.add('show');
             executeMarkdown();
           });
         }
       } else {
+        setMarkdownMode('selected');
         dom.mdNoSelectionBanner.style.display = 'none';
         dom.mdResultArea.classList.add('show');
         executeMarkdown();
       }
     }
 
-    checkSelectionAndExecute();
+    checkSelectionAndExecute(true);
   }
 
   function executePlainTextExtract() {
