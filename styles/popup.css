@@ -190,11 +190,17 @@ body {
   border-color: #f72585;
 }
 
-.tool-card.emojiconverter:hover {
-  background: linear-gradient(135deg, #fffdf0 0%, #fff 100%);
-  box-shadow: 0 8px 30px rgba(240,180,0,0.12);
-  border-color: #f0b400;
-}
+	.tool-card.emojiconverter:hover {
+	  background: linear-gradient(135deg, #fffdf0 0%, #fff 100%);
+	  box-shadow: 0 8px 30px rgba(240,180,0,0.12);
+	  border-color: #f0b400;
+	}
+
+	.tool-card.webclip:hover {
+	  background: linear-gradient(135deg, #eef0ff 0%, #fff 100%);
+	  box-shadow: 0 8px 30px rgba(67,97,238,0.12);
+	  border-color: #4361ee;
+	}
 
 .tool-card.disabled {
   opacity: 0.65;
@@ -321,12 +327,17 @@ body {
   text-align: center;
 }
 
-.mode-pill.active {
-  background: #eef0ff;
-  border-color: #4361ee;
-  color: #4361ee;
-  box-shadow: 0 2px 8px rgba(67,97,238,0.1);
-}
+	.mode-pill.active {
+	  background: #eef0ff;
+	  border-color: #4361ee;
+	  color: #4361ee;
+	  box-shadow: 0 2px 8px rgba(67,97,238,0.1);
+	}
+
+	.mode-pill:disabled {
+	  opacity: 0.45;
+	  cursor: default;
+	}
 
 .btn-primary {
   width: 100%;
@@ -1253,17 +1264,237 @@ body.i18n-transitioning .popup {
   box-shadow: 0 2px 8px rgba(240,180,0,0.15);
 }
 
-.ec-result {
-  font-family: "SF Mono", "Fira Code", "Menlo", monospace;
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--text);
-  white-space: pre-wrap;
-  word-break: break-all;
-  min-height: 48px;
-}
+	.ec-result {
+	  font-family: "SF Mono", "Fira Code", "Menlo", monospace;
+	  font-size: 12px;
+	  line-height: 1.7;
+	  color: var(--text);
+	  white-space: pre-wrap;
+	  word-break: break-all;
+	  min-height: 48px;
+	}
 
-@media (max-width: 420px) {
+	.webclip-unavailable {
+	  padding: 12px 14px;
+	  border-radius: 12px;
+	  background: #fff4f5;
+	  border: 1.5px solid #ffd0d7;
+	  color: var(--danger);
+	  font-size: 12px;
+	  line-height: 1.5;
+	  margin-bottom: 14px;
+	}
+
+	.webclip-source {
+	  padding: 12px 14px;
+	  border-radius: 12px;
+	  border: 1.5px solid var(--border);
+	  background: var(--surface-hover);
+	  margin-bottom: 14px;
+	}
+
+	.webclip-source-title {
+	  font-size: 13px;
+	  font-weight: 700;
+	  color: var(--text);
+	  line-height: 1.4;
+	  margin-bottom: 4px;
+	  word-break: break-word;
+	}
+
+	.webclip-source-meta {
+	  font-size: 11px;
+	  color: var(--text-muted);
+	  line-height: 1.4;
+	  word-break: break-all;
+	}
+
+	.webclip-preview-panel {
+	  margin-bottom: 14px;
+	}
+
+	.webclip-preview {
+	  min-height: 72px;
+	  max-height: 150px;
+	  white-space: pre-wrap;
+	  word-break: break-word;
+	  color: var(--text-sec);
+	}
+
+	.webclip-form {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 10px;
+	  margin-bottom: 12px;
+	}
+
+	.webclip-action-row {
+	  display: flex;
+	  gap: 8px;
+	  margin: 12px 0;
+	}
+
+	.webclip-action-row .export-btn {
+	  padding: 11px 12px;
+	  border-radius: 12px;
+	  font-size: 12px;
+	}
+
+	.webclip-field {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 6px;
+	  font-size: 11px;
+	  font-weight: 700;
+	  color: var(--text-muted);
+	}
+
+	.webclip-field input,
+	.webclip-field textarea {
+	  width: 100%;
+	  padding: 10px 12px;
+	  border-radius: 12px;
+	  border: 1.5px solid var(--border);
+	  background: var(--surface);
+	  font-size: 12px;
+	  color: var(--text);
+	  line-height: 1.5;
+	  font-family: inherit;
+	  transition: border-color var(--transition), box-shadow var(--transition);
+	}
+
+	.webclip-field textarea {
+	  min-height: 64px;
+	  max-height: 120px;
+	  resize: vertical;
+	}
+
+	.webclip-field input:focus,
+	.webclip-field textarea:focus {
+	  border-color: var(--accent);
+	  outline: none;
+	  box-shadow: 0 0 0 3px rgba(67,97,238,0.08);
+	}
+
+	.webclip-list {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 8px;
+	  margin-bottom: 12px;
+	}
+
+	.webclip-empty {
+	  padding: 16px;
+	  border-radius: 12px;
+	  border: 1.5px dashed var(--border);
+	  background: var(--surface-hover);
+	  color: var(--text-muted);
+	  font-size: 12px;
+	  line-height: 1.5;
+	  text-align: center;
+	}
+
+	.webclip-item {
+	  border-radius: 12px;
+	  border: 1.5px solid var(--border);
+	  background: var(--surface);
+	  padding: 12px;
+	}
+
+	.webclip-item-title {
+	  font-size: 12px;
+	  font-weight: 700;
+	  color: var(--text);
+	  line-height: 1.4;
+	  margin-bottom: 5px;
+	  word-break: break-word;
+	}
+
+	.webclip-item-text {
+	  font-size: 11px;
+	  color: var(--text-sec);
+	  line-height: 1.5;
+	  max-height: 3em;
+	  overflow: hidden;
+	  white-space: pre-wrap;
+	  word-break: break-word;
+	  margin-bottom: 6px;
+	}
+
+	.webclip-item-meta {
+	  font-size: 10px;
+	  color: var(--text-muted);
+	  margin-bottom: 8px;
+	  word-break: break-all;
+	}
+
+	.webclip-item-tags {
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 5px;
+	  margin-bottom: 7px;
+	}
+
+	.webclip-tag {
+	  display: inline-flex;
+	  align-items: center;
+	  max-width: 100%;
+	  padding: 3px 7px;
+	  border-radius: 999px;
+	  background: var(--accent-light);
+	  color: var(--accent);
+	  font-size: 10px;
+	  font-weight: 700;
+	  line-height: 1.2;
+	  word-break: break-word;
+	}
+
+	.webclip-item-note {
+	  padding: 7px 9px;
+	  border-radius: 10px;
+	  background: var(--surface-hover);
+	  border: 1px solid var(--border);
+	  color: var(--text-sec);
+	  font-size: 11px;
+	  line-height: 1.45;
+	  white-space: pre-wrap;
+	  word-break: break-word;
+	  max-height: 4.4em;
+	  overflow: hidden;
+	  margin-bottom: 8px;
+	}
+
+	.webclip-actions {
+	  display: flex;
+	  gap: 6px;
+	}
+
+	.webclip-actions button {
+	  flex: 1;
+	  padding: 7px 8px;
+	  border-radius: 10px;
+	  border: 1.5px solid var(--border);
+	  background: var(--surface-hover);
+	  color: var(--text-sec);
+	  font-size: 11px;
+	  font-weight: 600;
+	  cursor: pointer;
+	  transition: all var(--transition);
+	}
+
+	.webclip-actions button:hover {
+	  border-color: var(--accent);
+	  color: var(--accent);
+	  background: var(--accent-light);
+	}
+
+	.webclip-actions button.danger:hover {
+	  border-color: var(--danger);
+	  color: var(--danger);
+	  background: #fff4f5;
+	}
+
+	@media (max-width: 420px) {
   .action-bar {
     bottom: 38px;
     padding: 10px 12px;

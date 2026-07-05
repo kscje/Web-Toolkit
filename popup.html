@@ -37,19 +37,23 @@
             <div class="card-icon green">🔤</div>
             <div class="card-name" data-i18n="tools.caseconverter.name">大小写/风格转换</div>
           </div>
-          <div class="tool-card textreverser" data-tool="textreverser" id="cardTextReverser">
-            <div class="card-icon orange">🔄</div>
-            <div class="card-name" data-i18n="tools.textreverser.name">文本反转</div>
-          </div>
-          <div class="tool-card qrcode" data-tool="qrcode" id="cardQRCode">
-            <div class="card-icon orange">🔲</div>
-            <div class="card-name" data-i18n="tools.qrcode.name">二维码生成</div>
-          </div>
-          <div class="tool-card emojiconverter" data-tool="emojiconverter" id="cardEmojiConverter">
-            <div class="card-icon yellow">😄</div>
-            <div class="card-name" data-i18n="tools.emoji_converter.name">Emoji转换</div>
-          </div>
-        </div>
+	          <div class="tool-card textreverser" data-tool="textreverser" id="cardTextReverser">
+	            <div class="card-icon orange">🔄</div>
+	            <div class="card-name" data-i18n="tools.textreverser.name">文本反转</div>
+	          </div>
+	          <div class="tool-card webclip" data-tool="webclip" id="cardWebClip">
+	            <div class="card-icon blue">🔖</div>
+	            <div class="card-name" data-i18n="tools.webclip.name">网页剪藏</div>
+	          </div>
+	          <div class="tool-card qrcode" data-tool="qrcode" id="cardQRCode">
+	            <div class="card-icon orange">🔲</div>
+	            <div class="card-name" data-i18n="tools.qrcode.name">二维码生成</div>
+	          </div>
+	          <div class="tool-card emojiconverter" data-tool="emojiconverter" id="cardEmojiConverter">
+	            <div class="card-icon yellow">😄</div>
+	            <div class="card-name" data-i18n="tools.emoji_converter.name">Emoji转换</div>
+	          </div>
+	        </div>
 
         <div class="section-label" data-i18n="home.coming_soon">即将推出</div>
         <div class="coming-card" data-i18n="home.coming_soon_desc">
@@ -98,7 +102,7 @@
         </div>
       </div>
 
-      <div class="view" id="viewSettings">
+	      <div class="view" id="viewSettings">
 
         <div class="settings-section">
           <button class="settings-full-btn" id="btnOpenFullSettings" data-i18n="settings.open_full_settings">打开全部设置</button>
@@ -118,9 +122,55 @@
             </div>
           </div>
         </div>
-      </div>
+	      </div>
 
-      <div class="view" id="viewWordCount">
+	      <div class="view" id="viewWebClip">
+
+	        <div class="mode-pills">
+	          <button class="mode-pill active" id="webClipModeSelection" data-mode="selection" data-i18n="tools.webclip.mode_selected">选中内容</button>
+	          <button class="mode-pill" id="webClipModePage" data-mode="page" data-i18n="tools.webclip.mode_page">当前页面</button>
+	        </div>
+
+	        <div class="webclip-unavailable" id="webClipUnavailable" style="display:none;" data-i18n="tools.webclip.status_unavailable">
+	          无法访问当前页面，请检查是否在普通网页上
+	        </div>
+
+	        <div class="section-label" data-i18n="tools.webclip.label_source">来源</div>
+	        <div class="webclip-source">
+	          <div class="webclip-source-title" id="webClipSourceTitle">—</div>
+	          <div class="webclip-source-meta" id="webClipSourceMeta">—</div>
+	        </div>
+
+	        <div class="section-label" data-i18n="tools.webclip.label_content">剪藏内容</div>
+	        <div class="preview-panel webclip-preview-panel">
+	          <div class="preview-body webclip-preview" id="webClipPreview"></div>
+	        </div>
+
+	        <div class="webclip-form">
+	          <label class="webclip-field">
+	            <span data-i18n="tools.webclip.label_tags">标签</span>
+	            <input id="webClipTags" type="text" maxlength="240" data-i18n-placeholder="tools.webclip.placeholder_tags" placeholder="例如：学习, 资料">
+	          </label>
+	          <label class="webclip-field">
+	            <span data-i18n="tools.webclip.label_note">备注</span>
+	            <textarea id="webClipNote" maxlength="500" data-i18n-placeholder="tools.webclip.placeholder_note" placeholder="添加备注，可选"></textarea>
+	          </label>
+	        </div>
+
+	        <div class="webclip-action-row">
+	          <button class="export-btn primary" id="btnSaveWebClip" data-i18n="tools.webclip.btn_save">保存剪藏</button>
+	        </div>
+
+	        <div class="section-label" data-i18n="tools.webclip.recent_title">最近剪藏</div>
+	        <div class="webclip-list" id="webClipList"></div>
+
+	        <div class="webclip-action-row">
+	          <button class="export-btn" id="btnExportWebClipMD" data-i18n="tools.webclip.btn_export_md">导出 Markdown</button>
+	          <button class="export-btn" id="btnExportWebClipTXT" data-i18n="tools.webclip.btn_export_txt">导出 TXT</button>
+	        </div>
+	      </div>
+
+	      <div class="view" id="viewWordCount">
 
         <div class="mode-pills">
           <button class="mode-pill active" data-mode="selected" data-i18n="tools.wordcount.mode_selected">选中内容</button>

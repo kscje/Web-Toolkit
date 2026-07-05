@@ -84,13 +84,14 @@ var ConfigManager = (function () {
 var StorageManager = (function () {
   'use strict';
 
-  var KEYS = {
-    USER_PREFERENCES: 'user_preferences',
-    TOOL_SETTINGS: 'tool_settings',
-    TOOL_STATES: 'tool_states',
-    USAGE_STATS: 'usage_stats',
-    USER_SUGGESTIONS: 'user_suggestions'
-  };
+	  var KEYS = {
+	    USER_PREFERENCES: 'user_preferences',
+	    TOOL_SETTINGS: 'tool_settings',
+	    TOOL_STATES: 'tool_states',
+	    USAGE_STATS: 'usage_stats',
+	    USER_SUGGESTIONS: 'user_suggestions',
+	    SAVED_CLIPS: 'saved_clips'
+	  };
 
   var DEFAULTS = {
     user_preferences: {
@@ -105,9 +106,16 @@ var StorageManager = (function () {
       wordcount: true,
       markdown: true
     },
-    usage_stats: {},
-    user_suggestions: []
-  };
+	    usage_stats: {},
+	    user_suggestions: [],
+	    saved_clips: []
+	  };
+
+	  var MAX_CLIPS = 200;
+
+	  function createClipId() {
+	    return 'clip_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+	  }
 
   function storageGet(keys) {
     if (TextFlow.isChromeStorageAvailable()) {
@@ -182,11 +190,71 @@ var StorageManager = (function () {
     });
   }
 
-  function getSuggestions() {
-    return get(KEYS.USER_SUGGESTIONS).then(function (suggestions) {
-      return suggestions || [];
-    });
-  }
+	  function getSuggestions() {
+	    return get(KEYS.USER_SUGGESTIONS).then(function (suggestions) {
+	      return suggestions || [];
+	    });
+	  }
+
+	  function normalizeClip(clip) {
+	    var now = new Date().toISOString();
+	    var url = clip.url || '';
+	    var domain = clip.domain || '';
+	    if (!domain && url) {
+	      try {
+	        domain = new URL(url).hostname;
+	      } catch (e) {}
+	    }
+	    return {
+	      id: clip.id || createClipId(),
+	      type: clip.type === 'selection' ? 'selection' : 'page',
+	      title: clip.title || domain || 'Untitled Page',
+	      url: url,
+	      domain: domain,
+	      text: clip.text || '',
+	      tags: Array.isArray(clip.tags) ? clip.tags : [],
+	      note: clip.note || '',
+	      created_at: clip.created_at || now,
+	      updated_at: clip.updated_at || now
+	    };
+	  }
+
+	  function sortClips(clips) {
+	    return (clips || []).slice().sort(function (a, b) {
+	      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+	    });
+	  }
+
+	  function addClip(clip) {
+	    return get(KEYS.SAVED_CLIPS).then(function (clips) {
+	      clips = Array.isArray(clips) ? clips : [];
+	      clips.push(normalizeClip(clip || {}));
+	      clips = sortClips(clips).slice(0, MAX_CLIPS);
+	      return set(KEYS.SAVED_CLIPS, clips).then(function () {
+	        return clips[0];
+	      });
+	    });
+	  }
+
+	  function getClips() {
+	    return get(KEYS.SAVED_CLIPS).then(function (clips) {
+	      return sortClips(Array.isArray(clips) ? clips : []);
+	    });
+	  }
+
+	  function deleteClip(id) {
+	    return get(KEYS.SAVED_CLIPS).then(function (clips) {
+	      clips = Array.isArray(clips) ? clips : [];
+	      clips = clips.filter(function (clip) {
+	        return clip.id !== id;
+	      });
+	      return set(KEYS.SAVED_CLIPS, clips);
+	    });
+	  }
+
+	  function clearClips() {
+	    return set(KEYS.SAVED_CLIPS, []);
+	  }
 
   function getToolState(toolId) {
     return get(KEYS.TOOL_STATES).then(function (states) {
@@ -222,9 +290,13 @@ var StorageManager = (function () {
     init: init,
     get: get,
     set: set,
-    addSuggestion: addSuggestion,
-    getSuggestions: getSuggestions,
-    getToolState: getToolState,
+	    addSuggestion: addSuggestion,
+	    getSuggestions: getSuggestions,
+	    addClip: addClip,
+	    getClips: getClips,
+	    deleteClip: deleteClip,
+	    clearClips: clearClips,
+	    getToolState: getToolState,
     setToolState: setToolState,
     setAllToolStates: setAllToolStates,
     getUserPreferences: getUserPreferences,

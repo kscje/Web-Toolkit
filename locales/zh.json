@@ -190,8 +190,8 @@
       "error_no_result": "没有可复制的结果",
       "error_content_script": "无法访问当前页面，请检查是否在普通网页上"
     },
-    "emoji_converter": {
-      "name": "Emoji转换",
+	    "emoji_converter": {
+	      "name": "Emoji转换",
       "desc": "将文本转换为 Emoji 表情、区域指示符、带圈字母等趣味格式",
       "title": "😄 Emoji转换",
       "mode_selected": "选中内容",
@@ -213,10 +213,46 @@
       "toast_copy_failed": "复制失败",
       "toast_no_text": "请先输入或选择文本",
       "error_no_text": "没有可转换的文本",
-      "error_no_result": "没有可复制的结果",
-      "error_content_script": "无法访问当前页面，请检查是否在普通网页上"
-    }
-  },
+	      "error_no_result": "没有可复制的结果",
+	      "error_content_script": "无法访问当前页面，请检查是否在普通网页上"
+	    },
+	    "webclip": {
+	      "name": "网页剪藏",
+	      "desc": "保存页面或选中文本，保留来源链接",
+	      "title": "🔖 网页剪藏",
+	      "mode_selected": "选中内容",
+	      "mode_page": "当前页面",
+	      "label_source": "来源",
+	      "label_content": "剪藏内容",
+	      "label_tags": "标签",
+	      "label_note": "备注",
+	      "placeholder_tags": "例如：学习, 资料",
+	      "placeholder_note": "添加备注，可选",
+	      "btn_save": "保存剪藏",
+	      "btn_copy": "复制",
+	      "btn_open": "打开",
+	      "btn_delete": "删除",
+	      "btn_export_md": "导出 Markdown",
+	      "btn_export_txt": "导出 TXT",
+	      "recent_title": "最近剪藏",
+	      "empty": "暂无剪藏，保存页面或选中文字后会显示在这里",
+	      "status_loading": "正在读取页面信息…",
+	      "status_unavailable": "无法访问当前页面，请检查是否在普通网页上",
+	      "status_saved": "已保存到网页剪藏",
+	      "status_deleted": "已删除剪藏",
+	      "status_failed": "保存失败",
+	      "toast_copy_success": "已复制到剪贴板",
+	      "toast_copy_failed": "复制失败",
+	      "toast_export_started": "导出已开始",
+	      "toast_too_long": "内容较长，已保存前 10000 个字符",
+	      "error_not_found": "未找到剪藏",
+	      "export_title": "我的网页剪藏",
+	      "export_source": "来源",
+	      "export_time": "时间",
+	      "export_tags": "标签",
+	      "export_note": "备注"
+	    }
+	  },
   "suggestion": {
     "title": "💡 想要新功能？",
     "desc": "告诉我们您需要的工具，我们将优先开发",
@@ -248,9 +284,10 @@
     "feature_qrcode": "二维码生成",
     "feature_caseconverter": "大小写/风格转换",
     "feature_textreverser": "文本反转",
-    "feature_textdedup": "去重/排序",
-    "feature_emojiconverter": "Emoji转换",
-    "feature_suggestion": "用户建议",
+	    "feature_textdedup": "去重/排序",
+	    "feature_emojiconverter": "Emoji转换",
+	    "feature_webclip": "网页剪藏",
+	    "feature_suggestion": "用户建议",
     "sort_order": "显示排序",
     "drag_hint": "拖拽 ≡ 图标调整顺序",
     "save_settings": "保存设置",
@@ -277,8 +314,9 @@
     "wordcount": "统计选中字数",
     "save_markdown": "保存为 Markdown",
     "extract_plaintext": "提取选中纯文本",
-    "qrcode": "生成选中内容二维码",
-    "textreverse": "反转选中文本",
-    "emoji_convert": "Emoji转换选中文本"
-  }
-}
+	    "qrcode": "生成选中内容二维码",
+	    "textreverse": "反转选中文本",
+	    "emoji_convert": "Emoji转换选中文本",
+	    "save_webclip": "保存到网页剪藏"
+	  }
+	}

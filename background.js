@@ -27,13 +27,92 @@ function createContextMenus() {
       title: I18n.t('context_menu.textreverse'),
       contexts: ['selection']
     });
-    chrome.contextMenus.create({
-      id: 'emojiConvertSelected',
-      title: I18n.t('context_menu.emoji_convert'),
-      contexts: ['selection']
-    });
-  });
-}
+	    chrome.contextMenus.create({
+	      id: 'emojiConvertSelected',
+	      title: I18n.t('context_menu.emoji_convert'),
+	      contexts: ['selection']
+	    });
+	    StorageManager.getToolState('webclip').then(function (enabled) {
+	      if (enabled === false) return;
+	      chrome.contextMenus.create({
+	        id: 'saveWebClipSelected',
+	        title: I18n.t('context_menu.save_webclip'),
+	        contexts: ['selection']
+	      });
+	    });
+	  });
+	}
+
+	function getDomain(url) {
+	  try {
+	    return new URL(url || '').hostname;
+	  } catch (e) {
+	    return '';
+	  }
+	}
+
+	function saveSelectionAsWebClip(info, tab) {
+	  return StorageManager.getToolState('webclip').then(function (enabled) {
+	    if (enabled === false) return null;
+
+	    var selectionText = (info.selectionText || '').trim();
+	    var tabInfo = {
+	      title: (tab && tab.title) || '',
+	      url: (tab && tab.url) || '',
+	      domain: getDomain((tab && tab.url) || '')
+	    };
+
+	    function saveClip(pageInfo) {
+	      pageInfo = pageInfo || {};
+	      var url = pageInfo.url || tabInfo.url;
+	      var domain = pageInfo.domain || tabInfo.domain || getDomain(url);
+	      var text = selectionText;
+	      var now = new Date().toISOString();
+	      if (text.length > 10000) {
+	        text = text.substring(0, 10000);
+	      }
+	      return StorageManager.addClip({
+	        id: 'clip_' + Date.now() + '_' + Math.floor(Math.random() * 100000),
+	        type: 'selection',
+	        title: pageInfo.title || tabInfo.title || domain || 'Untitled Page',
+	        url: url,
+	        domain: domain,
+	        text: text,
+	        tags: [],
+	        note: '',
+	        created_at: now,
+	        updated_at: now
+	      });
+	    }
+
+	    if (!tab || !tab.id) {
+	      return saveClip(tabInfo);
+	    }
+
+	    return new Promise(function (resolve) {
+	      chrome.tabs.sendMessage(tab.id, {
+	        action: 'getPageInfo',
+	        payload: {},
+	        requestId: 'ctx_webclip_' + Date.now()
+	      }, function (response) {
+	        if (chrome.runtime.lastError || !response || !response.success) {
+	          resolve(tabInfo);
+	          return;
+	        }
+	        resolve(response.data || tabInfo);
+	      });
+	    }).then(saveClip).then(function (clip) {
+	      chrome.storage.local.set({ lastWebClipSaved: { id: clip.id, at: new Date().toISOString() } });
+	      if (chrome.action && chrome.action.openPopup) {
+	        var popupResult = chrome.action.openPopup();
+	        if (popupResult && popupResult.catch) {
+	          popupResult.catch(function () {});
+	        }
+	      }
+	      return clip;
+	    });
+	  });
+	}
 
 I18n.init().then(function () {
   createContextMenus();
@@ -43,15 +122,17 @@ I18n.init().then(function () {
       var newPrefs = changes.user_preferences.newValue || {};
       var oldPrefs = changes.user_preferences.oldValue || {};
       var newLang = newPrefs.language === 'en_US' ? 'en' : 'zh';
-      var oldLang = oldPrefs.language === 'en_US' ? 'en' : 'zh';
-      if (newLang !== oldLang) {
-        I18n.setLanguage(newLang).then(function () {
-          createContextMenus();
-        });
-      }
-    }
-  });
-});
+	      var oldLang = oldPrefs.language === 'en_US' ? 'en' : 'zh';
+	      if (newLang !== oldLang) {
+	        I18n.setLanguage(newLang).then(function () {
+	          createContextMenus();
+	        });
+	      }
+	    } else if (namespace === 'local' && changes.tool_states) {
+	      createContextMenus();
+	    }
+	  });
+	});
 
 chrome.runtime.onInstalled.addListener(function () {
   StorageManager.init().then(function () {
@@ -120,19 +201,23 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
         chrome.action.openPopup();
       }
     });
-  } else if (info.menuItemId === 'emojiConvertSelected') {
-    chrome.tabs.sendMessage(tab.id, {
-      action: 'getSelection',
+	  } else if (info.menuItemId === 'emojiConvertSelected') {
+	    chrome.tabs.sendMessage(tab.id, {
+	      action: 'getSelection',
       payload: {},
       requestId: 'ctx_' + Date.now()
     }, function (response) {
       if (response && response.success && response.data.hasSelection) {
         chrome.storage.local.set({ lastEmojiConvertData: response.data.text });
-        chrome.action.openPopup();
-      }
-    });
-  }
-});
+	        chrome.action.openPopup();
+	      }
+	    });
+	  } else if (info.menuItemId === 'saveWebClipSelected') {
+	    saveSelectionAsWebClip(info, tab).catch(function (err) {
+	      console.warn('[TextFlow] Failed to save web clip:', err);
+	    });
+	  }
+	});
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === 'updatePreference') {

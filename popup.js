@@ -14,10 +14,11 @@
     plaintext: false,
     qrcode: false,
     caseconverter: false,
-    textreverser: false,
-    textdedup: false,
-    emojiconverter: false
-  };
+	    textreverser: false,
+	    textdedup: false,
+	    emojiconverter: false,
+	    webclip: false
+	  };
 
   var moduleLoadQueue = {};
 
@@ -57,10 +58,11 @@
       plaintext: 'tools/plaintext.js',
       qrcode: 'tools/qrcode.js',
       caseconverter: 'tools/caseconverter.js',
-      textreverser: 'tools/textreverser.js',
-      textdedup: 'tools/textdedup.js',
-      emojiconverter: 'tools/emoji_converter.js'
-    };
+	      textreverser: 'tools/textreverser.js',
+	      textdedup: 'tools/textdedup.js',
+	      emojiconverter: 'tools/emoji_converter.js',
+	      webclip: 'tools/webclip.js'
+	    };
     var promise = loadScript(srcMap[name]).then(function () {
       moduleLoaded[name] = true;
     });
@@ -76,9 +78,10 @@
     dom.viewHome = $('#viewHome');
     dom.viewWordCount = $('#viewWordCount');
     dom.viewMarkdown = $('#viewMarkdown');
-    dom.viewPlainText = $('#viewPlainText');
-    dom.viewSettings = $('#viewSettings');
-    dom.contentArea = $('#contentArea');
+	    dom.viewPlainText = $('#viewPlainText');
+	    dom.viewSettings = $('#viewSettings');
+	    dom.viewWebClip = $('#viewWebClip');
+	    dom.contentArea = $('#contentArea');
     dom.statusText = $('#statusText');
     dom.toast = $('#toast');
     dom.wcResultArea = $('#wcResultArea');
@@ -135,8 +138,9 @@
     dom.tdResultText = $('#tdResultText');
     dom.btnCopyTD = $('#btnCopyTD');
     dom.viewEmojiConverter = $('#viewEmojiConverter');
-    dom.cardEmojiConverter = $('#cardEmojiConverter');
-    dom.ecInputArea = $('#ecInputArea');
+	    dom.cardEmojiConverter = $('#cardEmojiConverter');
+	    dom.cardWebClip = $('#cardWebClip');
+	    dom.ecInputArea = $('#ecInputArea');
     dom.ecManualInput = $('#ecManualInput');
     dom.ecCharCount = $('#ecCharCount');
     dom.ecSourceText = $('#ecSourceText');
@@ -147,10 +151,22 @@
     dom.btnCopyEC = $('#btnCopyEC');
     dom.headerBackBtn = $('#headerBackBtn');
     dom.headerTitle = $('#headerTitle');
-    dom.popupSuggestionInput = $('#popupSuggestionInput');
-    dom.popupCharCount = $('#popupCharCount');
-    dom.popupSubmitSuggestionBtn = $('#popupSubmitSuggestionBtn');
-  }
+	    dom.popupSuggestionInput = $('#popupSuggestionInput');
+	    dom.popupCharCount = $('#popupCharCount');
+	    dom.popupSubmitSuggestionBtn = $('#popupSubmitSuggestionBtn');
+	    dom.webClipModeSelection = $('#webClipModeSelection');
+	    dom.webClipModePage = $('#webClipModePage');
+	    dom.webClipUnavailable = $('#webClipUnavailable');
+	    dom.webClipSourceTitle = $('#webClipSourceTitle');
+	    dom.webClipSourceMeta = $('#webClipSourceMeta');
+	    dom.webClipPreview = $('#webClipPreview');
+	    dom.webClipTags = $('#webClipTags');
+	    dom.webClipNote = $('#webClipNote');
+	    dom.btnSaveWebClip = $('#btnSaveWebClip');
+	    dom.webClipList = $('#webClipList');
+	    dom.btnExportWebClipMD = $('#btnExportWebClipMD');
+	    dom.btnExportWebClipTXT = $('#btnExportWebClipTXT');
+	  }
 
   var viewTitleKeys = {
     home: 'app.title',
@@ -160,10 +176,11 @@
     plaintext: 'tools.plaintext.name',
     qrcode: 'tools.qrcode.name',
     caseconverter: 'tools.caseconverter.name',
-    textreverser: 'tools.textreverser.name',
-    textdedup: 'tools.textdedup.name',
-    emojiconverter: 'tools.emoji_converter.name'
-  };
+	    textreverser: 'tools.textreverser.name',
+	    textdedup: 'tools.textdedup.name',
+	    emojiconverter: 'tools.emoji_converter.name',
+	    webclip: 'tools.webclip.name'
+	  };
 
   function updateHeader(viewName) {
     var key = viewTitleKeys[viewName] || 'app.title';
@@ -186,10 +203,11 @@
       plaintext: dom.viewPlainText,
       qrcode: dom.viewQRCode,
       caseconverter: dom.viewCaseConverter,
-      textreverser: dom.viewTextReverser,
-      textdedup: dom.viewTextDedup,
-      emojiconverter: dom.viewEmojiConverter
-    };
+	      textreverser: dom.viewTextReverser,
+	      textdedup: dom.viewTextDedup,
+	      emojiconverter: dom.viewEmojiConverter,
+	      webclip: dom.viewWebClip
+	    };
     for (var key in viewMap) {
       if (viewMap[key]) {
         viewMap[key].classList.toggle('active', key === name);
@@ -365,19 +383,28 @@
       });
     });
 
-    dom.cardEmojiConverter.addEventListener('click', function () {
-      showView('emojiconverter');
-      document.querySelector('#viewEmojiConverter .mode-pill[data-mode="selected"]').classList.add('active');
-      document.querySelector('#viewEmojiConverter .mode-pill[data-mode="manual"]').classList.remove('active');
+	    dom.cardEmojiConverter.addEventListener('click', function () {
+	      showView('emojiconverter');
+	      document.querySelector('#viewEmojiConverter .mode-pill[data-mode="selected"]').classList.add('active');
+	      document.querySelector('#viewEmojiConverter .mode-pill[data-mode="manual"]').classList.remove('active');
 
       ensureModule('emojiconverter').then(function () {
         EmojiConverterTool.setMode('selected');
         ecController.init();
       }).catch(function () {
-        showToast(I18n.t('tools.emoji_converter.status_failed'));
-      });
-    });
-  }
+	        showToast(I18n.t('tools.emoji_converter.status_failed'));
+	      });
+	    });
+
+	    dom.cardWebClip.addEventListener('click', function () {
+	      showView('webclip');
+	      ensureModule('webclip').then(function () {
+	        webClipViewInit();
+	      }).catch(function () {
+	        showToast(I18n.t('tools.webclip.status_failed'));
+	      });
+	    });
+	  }
 
   function executeWordCount() {
     setStatus(I18n.t('tools.wordcount.status_loading'));
@@ -632,8 +659,8 @@
     });
   }
 
-  var _qrEventsBound = false;
-  function qrCodeViewInit() {
+	  var _qrEventsBound = false;
+	  function qrCodeViewInit() {
     if (!_qrEventsBound) {
       _qrEventsBound = true;
       $$('#viewQRCode .mode-pill').forEach(function (pill) {
@@ -666,10 +693,233 @@
       });
     }
 
-    executeQRCode();
-  }
+	    executeQRCode();
+	  }
 
-  function createToolViewController(config) {
+	  var _webClipEventsBound = false;
+	  var _webClipContext = null;
+	  var _webClipMode = 'page';
+
+	  function formatClipTime(iso) {
+	    var date = iso ? new Date(iso) : new Date();
+	    if (isNaN(date.getTime())) date = new Date();
+	    var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+	    return pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+	  }
+
+	  function setWebClipMode(mode) {
+	    if (mode === 'selection' && (!_webClipContext || !_webClipContext.selectionText)) {
+	      mode = 'page';
+	    }
+	    _webClipMode = mode;
+	    $$('#viewWebClip .mode-pill').forEach(function (pill) {
+	      pill.classList.toggle('active', pill.dataset.mode === mode);
+	    });
+	    updateWebClipPreview();
+	  }
+
+	  function updateWebClipPreview() {
+	    if (!_webClipContext) {
+	      dom.webClipPreview.textContent = I18n.t('tools.webclip.status_loading');
+	      return;
+	    }
+
+	    dom.webClipSourceTitle.textContent = _webClipContext.title || I18n.t('errors.unknown_page');
+	    dom.webClipSourceMeta.textContent = (_webClipContext.domain || '') + (_webClipContext.url ? ' · ' + _webClipContext.url : '');
+
+	    if (_webClipContext.supported === false) {
+	      dom.webClipUnavailable.style.display = 'block';
+	      dom.btnSaveWebClip.disabled = true;
+	      dom.webClipPreview.textContent = I18n.t('tools.webclip.status_unavailable');
+	      return;
+	    }
+
+	    dom.webClipUnavailable.style.display = 'none';
+	    dom.btnSaveWebClip.disabled = false;
+
+	    if (_webClipMode === 'selection') {
+	      dom.webClipPreview.textContent = _webClipContext.selectionText || '';
+	    } else {
+	      dom.webClipPreview.textContent = _webClipContext.title + '\n' + _webClipContext.url;
+	    }
+	  }
+
+	  function renderWebClipList() {
+	    if (typeof WebClipTool === 'undefined' || !dom.webClipList) return Promise.resolve();
+	    return WebClipTool.getRecentClips(5).then(function (clips) {
+	      dom.webClipList.innerHTML = '';
+
+	      if (!clips.length) {
+	        var empty = document.createElement('div');
+	        empty.className = 'webclip-empty';
+	        empty.textContent = I18n.t('tools.webclip.empty');
+	        dom.webClipList.appendChild(empty);
+	        return;
+	      }
+
+	      clips.forEach(function (clip) {
+	        var item = document.createElement('div');
+	        item.className = 'webclip-item';
+
+	        var title = document.createElement('div');
+	        title.className = 'webclip-item-title';
+	        title.textContent = clip.title || I18n.t('errors.unknown_page');
+
+	        var text = document.createElement('div');
+	        text.className = 'webclip-item-text';
+	        text.textContent = clip.text || clip.url || '';
+
+	        var meta = document.createElement('div');
+	        meta.className = 'webclip-item-meta';
+	        meta.textContent = (clip.domain || '') + ' · ' + formatClipTime(clip.created_at);
+
+	        var tags = null;
+	        if (clip.tags && clip.tags.length) {
+	          tags = document.createElement('div');
+	          tags.className = 'webclip-item-tags';
+	          clip.tags.forEach(function (tagText) {
+	            var tag = document.createElement('span');
+	            tag.className = 'webclip-tag';
+	            tag.textContent = tagText;
+	            tags.appendChild(tag);
+	          });
+	        }
+
+	        var note = null;
+	        if (clip.note) {
+	          note = document.createElement('div');
+	          note.className = 'webclip-item-note';
+	          note.textContent = clip.note;
+	        }
+
+	        var actions = document.createElement('div');
+	        actions.className = 'webclip-actions';
+
+	        var copyBtn = document.createElement('button');
+	        copyBtn.type = 'button';
+	        copyBtn.textContent = I18n.t('tools.webclip.btn_copy');
+	        copyBtn.addEventListener('click', function () {
+	          WebClipTool.copyClip(clip.id).then(function () {
+	            showToast(I18n.t('tools.webclip.toast_copy_success'));
+	          }).catch(function (err) {
+	            showToast(err.message || I18n.t('tools.webclip.toast_copy_failed'));
+	          });
+	        });
+
+	        var openBtn = document.createElement('button');
+	        openBtn.type = 'button';
+	        openBtn.textContent = I18n.t('tools.webclip.btn_open');
+	        openBtn.addEventListener('click', function () {
+	          if (!clip.url) return;
+	          if (TextFlow.isChromeExtension() && chrome.tabs && chrome.tabs.create) {
+	            chrome.tabs.create({ url: clip.url });
+	          } else {
+	            window.open(clip.url, '_blank');
+	          }
+	        });
+
+	        var deleteBtn = document.createElement('button');
+	        deleteBtn.type = 'button';
+	        deleteBtn.className = 'danger';
+	        deleteBtn.textContent = I18n.t('tools.webclip.btn_delete');
+	        deleteBtn.addEventListener('click', function () {
+	          WebClipTool.deleteClip(clip.id).then(function () {
+	            showToast(I18n.t('tools.webclip.status_deleted'));
+	            renderWebClipList();
+	          });
+	        });
+
+	        actions.appendChild(copyBtn);
+	        actions.appendChild(openBtn);
+	        actions.appendChild(deleteBtn);
+
+	        item.appendChild(title);
+	        item.appendChild(text);
+	        item.appendChild(meta);
+	        if (tags) item.appendChild(tags);
+	        if (note) item.appendChild(note);
+	        item.appendChild(actions);
+	        dom.webClipList.appendChild(item);
+	      });
+	    });
+	  }
+
+	  function loadWebClipContext() {
+	    setStatus(I18n.t('tools.webclip.status_loading'));
+	    dom.webClipPreview.textContent = I18n.t('tools.webclip.status_loading');
+
+	    return WebClipTool.loadContext().then(function (context) {
+	      _webClipContext = context;
+	      dom.webClipModeSelection.disabled = !context.selectionText;
+	      setWebClipMode(context.mode === 'selection' ? 'selection' : 'page');
+	      setStatus(I18n.t('app.status_ready'));
+	    }).catch(function (err) {
+	      _webClipContext = {
+	        supported: false,
+	        title: I18n.t('errors.unknown_page'),
+	        url: '',
+	        domain: '',
+	        selectionText: '',
+	        mode: 'page'
+	      };
+	      updateWebClipPreview();
+	      setStatus(I18n.t('tools.webclip.status_failed'));
+	      showToast(err.message || I18n.t('tools.webclip.status_unavailable'));
+	    });
+	  }
+
+	  function webClipViewInit() {
+	    if (!_webClipEventsBound) {
+	      _webClipEventsBound = true;
+
+	      $$('#viewWebClip .mode-pill').forEach(function (pill) {
+	        pill.addEventListener('click', function () {
+	          if (pill.disabled) return;
+	          setWebClipMode(pill.dataset.mode);
+	        });
+	      });
+
+	      dom.btnSaveWebClip.addEventListener('click', function () {
+	        setLoading(dom.btnSaveWebClip, true);
+	        WebClipTool.saveClip({
+	          context: _webClipContext,
+	          type: _webClipMode,
+	          tags: dom.webClipTags.value,
+	          note: dom.webClipNote.value
+	        }).then(function (result) {
+	          dom.webClipTags.value = '';
+	          dom.webClipNote.value = '';
+	          showToast(I18n.t(result.truncated ? 'tools.webclip.toast_too_long' : 'tools.webclip.status_saved'));
+	          return renderWebClipList();
+	        }).catch(function (err) {
+	          showToast(err.message || I18n.t('tools.webclip.status_failed'));
+	        }).then(function () {
+	          setLoading(dom.btnSaveWebClip, false);
+	        });
+	      });
+
+	      dom.btnExportWebClipMD.addEventListener('click', function () {
+	        WebClipTool.exportMarkdown().then(function () {
+	          showToast(I18n.t('tools.webclip.toast_export_started'));
+	        }).catch(function (err) {
+	          showToast(err.message || I18n.t('tools.webclip.empty'));
+	        });
+	      });
+
+	      dom.btnExportWebClipTXT.addEventListener('click', function () {
+	        WebClipTool.exportText().then(function () {
+	          showToast(I18n.t('tools.webclip.toast_export_started'));
+	        }).catch(function (err) {
+	          showToast(err.message || I18n.t('tools.webclip.empty'));
+	        });
+	      });
+	    }
+
+	    loadWebClipContext();
+	    renderWebClipList();
+	  }
+
+	  function createToolViewController(config) {
     var viewId = config.viewId;
     var getTool = config.getTool;
     var getEls = config.getEls;
@@ -1010,9 +1260,13 @@
     popupSuggestionInit();
   }
 
-  function refreshAllDynamicText() {
-    updateHeader(currentView);
-  }
+	  function refreshAllDynamicText() {
+	    updateHeader(currentView);
+	    if (currentView === 'webclip' && typeof WebClipTool !== 'undefined') {
+	      updateWebClipPreview();
+	      renderWebClipList();
+	    }
+	  }
 
   function headerInit() {
     dom.headerBackBtn.addEventListener('click', function () {
@@ -1020,9 +1274,9 @@
     });
   }
 
-  function checkSelection() {
-    if (!TextFlow.isChromeExtension()) return;
-    sendToContent('getSelection').then(function (resp) {
+	  function checkSelection() {
+	    if (!TextFlow.isChromeExtension()) return;
+	    sendToContent('getSelection').then(function (resp) {
       if (resp && resp.success && resp.data) {
         _selectionCache.hasSelection = !!resp.data.hasSelection;
         _selectionCache.text = resp.data.text || '';
@@ -1034,9 +1288,22 @@
     }).catch(function () {});
   }
 
-  function getSelectionCache() {
-    return _selectionCache;
-  }
+	  function getSelectionCache() {
+	    return _selectionCache;
+	  }
+
+	  function consumeLastWebClipSaved() {
+	    if (!TextFlow.isChromeExtension() || !chrome.storage || !chrome.storage.local) return;
+	    chrome.storage.local.get(['lastWebClipSaved'], function (result) {
+	      if (!result || !result.lastWebClipSaved) return;
+	      chrome.storage.local.remove(['lastWebClipSaved']);
+	      showView('webclip');
+	      ensureModule('webclip').then(function () {
+	        webClipViewInit();
+	        showToast(I18n.t('tools.webclip.status_saved'));
+	      });
+	    });
+	  }
 
   function preloadToolModules() {
     var priorityModules = ['wordcount', 'markdown', 'plaintext'];
@@ -1081,11 +1348,12 @@
       refreshAllDynamicText();
     });
 
-    I18n.init().then(function () {
-      setStatus(I18n.t('app.status_ready'));
-      checkSelection();
-      preloadToolModules();
-    });
+	    I18n.init().then(function () {
+	      setStatus(I18n.t('app.status_ready'));
+	      checkSelection();
+	      consumeLastWebClipSaved();
+	      preloadToolModules();
+	    });
   }
 
   init();

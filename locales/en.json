@@ -190,8 +190,8 @@
       "error_no_result": "No result to copy",
       "error_content_script": "Cannot access this page. Please check if you are on a regular web page."
     },
-    "emoji_converter": {
-      "name": "Emoji Converter",
+	    "emoji_converter": {
+	      "name": "Emoji Converter",
       "desc": "Convert text to emoji keywords, regional indicators, circled letters and more",
       "title": "😄 Emoji Converter",
       "mode_selected": "Selection",
@@ -213,10 +213,46 @@
       "toast_copy_failed": "Copy failed",
       "toast_no_text": "Please enter or select some text first",
       "error_no_text": "No text to convert",
-      "error_no_result": "No result to copy",
-      "error_content_script": "Cannot access this page. Please check if you are on a regular web page."
-    }
-  },
+	      "error_no_result": "No result to copy",
+	      "error_content_script": "Cannot access this page. Please check if you are on a regular web page."
+	    },
+	    "webclip": {
+	      "name": "Web Clipper",
+	      "desc": "Save pages or selected text with source links",
+	      "title": "🔖 Web Clipper",
+	      "mode_selected": "Selection",
+	      "mode_page": "Current Page",
+	      "label_source": "Source",
+	      "label_content": "Clip Content",
+	      "label_tags": "Tags",
+	      "label_note": "Note",
+	      "placeholder_tags": "Example: research, reading",
+	      "placeholder_note": "Add an optional note",
+	      "btn_save": "Save Clip",
+	      "btn_copy": "Copy",
+	      "btn_open": "Open",
+	      "btn_delete": "Delete",
+	      "btn_export_md": "Export Markdown",
+	      "btn_export_txt": "Export TXT",
+	      "recent_title": "Recent Clips",
+	      "empty": "No clips yet. Save a page or selected text and it will appear here.",
+	      "status_loading": "Reading page information…",
+	      "status_unavailable": "Cannot access this page. Please check if you are on a regular web page.",
+	      "status_saved": "Saved to Web Clipper",
+	      "status_deleted": "Clip deleted",
+	      "status_failed": "Save failed",
+	      "toast_copy_success": "Copied to clipboard",
+	      "toast_copy_failed": "Copy failed",
+	      "toast_export_started": "Export started",
+	      "toast_too_long": "Content is long. Saved the first 10000 characters",
+	      "error_not_found": "Clip not found",
+	      "export_title": "My Web Clips",
+	      "export_source": "Source",
+	      "export_time": "Time",
+	      "export_tags": "Tags",
+	      "export_note": "Note"
+	    }
+	  },
   "suggestion": {
     "title": "💡 Want a new feature?",
     "desc": "Tell us what tools you need, and we'll prioritize development",
@@ -248,9 +284,10 @@
     "feature_qrcode": "QR Code Generator",
     "feature_caseconverter": "Case Converter",
     "feature_textreverser": "Text Reverser",
-    "feature_textdedup": "Text Dedup / Sort",
-    "feature_emojiconverter": "Emoji Converter",
-    "feature_suggestion": "Suggestions",
+	    "feature_textdedup": "Text Dedup / Sort",
+	    "feature_emojiconverter": "Emoji Converter",
+	    "feature_webclip": "Web Clipper",
+	    "feature_suggestion": "Suggestions",
     "sort_order": "Display Order",
     "drag_hint": "Drag ≡ icons to reorder",
     "save_settings": "Save Settings",
@@ -277,8 +314,9 @@
     "wordcount": "Count Selected Words",
     "save_markdown": "Save as Markdown",
     "extract_plaintext": "Extract Selected Plain Text",
-    "qrcode": "Generate QR Code",
-    "textreverse": "Reverse Selected Text",
-    "emoji_convert": "Emoji Convert Selected Text"
-  }
-}
+	    "qrcode": "Generate QR Code",
+	    "textreverse": "Reverse Selected Text",
+	    "emoji_convert": "Emoji Convert Selected Text",
+	    "save_webclip": "Save to Web Clipper"
+	  }
+	}

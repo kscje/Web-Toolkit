@@ -189,10 +189,11 @@
       case 'getPageInfo': {
         sendResponse({
           success: true,
-          data: {
-            title: getPageTitle(),
-            url: getPageURL()
-          },
+	          data: {
+	            title: getPageTitle(),
+	            url: getPageURL(),
+	            domain: window.location.hostname
+	          },
           requestId: request.requestId
         });
         break;
