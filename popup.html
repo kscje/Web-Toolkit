@@ -65,7 +65,13 @@
 
         <div class="mode-pills">
           <button class="mode-pill active" data-mode="selected" data-i18n="tools.plaintext.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.plaintext.mode_manual">手动输入</button>
           <button class="mode-pill" data-mode="full" data-i18n="tools.plaintext.mode_full">整个页面</button>
+        </div>
+
+        <div class="manual-input-panel" id="ptManualPanel" style="display:none;">
+          <textarea id="ptManualInput" data-i18n-placeholder="tools.plaintext.placeholder_input" placeholder="请输入或粘贴要提取的文本…"></textarea>
+          <div class="manual-char-count" id="ptManualCharCount">0</div>
         </div>
 
         <div class="toggle-row">

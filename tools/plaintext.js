@@ -5,6 +5,7 @@ var PlainTextTool = (function () {
   var _currentMode = 'selected';
   var _mergeBlankLines = true;
   var _keepLinkURLs = false;
+  var _manualText = '';
   var _listeners = [];
 
   function _(key, fallback) {
@@ -98,6 +99,10 @@ var PlainTextTool = (function () {
   function execute(mode) {
     if (typeof mode === 'undefined') mode = _currentMode || 'selected';
 
+    if (mode === 'manual') {
+      return executeManual(_manualText);
+    }
+
     if (!TextFlow.isChromeExtension()) {
       return executeLocal();
     }
@@ -159,6 +164,21 @@ var PlainTextTool = (function () {
     return Promise.resolve(_currentData);
   }
 
+  function executeManual(text) {
+    _manualText = text || '';
+    var processedText = _keepLinkURLs ? processWithURLs(_manualText) : processPlain(_manualText);
+    processedText = postProcess(processedText, { mergeBlankLines: _mergeBlankLines });
+    _currentData = {
+      text: processedText,
+      pageTitle: _('tools.plaintext.mode_manual', '手动输入'),
+      pageURL: '',
+      mode: 'manual'
+    };
+    _currentMode = 'manual';
+    notifyListeners(_currentData);
+    return Promise.resolve(_currentData);
+  }
+
   function getResult() {
     return _currentData;
   }
@@ -187,6 +207,18 @@ var PlainTextTool = (function () {
     return _keepLinkURLs;
   }
 
+  function setManualText(text) {
+    _manualText = text || '';
+    if (_currentMode === 'manual') {
+      return executeManual(_manualText);
+    }
+    return Promise.resolve(_currentData);
+  }
+
+  function getManualText() {
+    return _manualText;
+  }
+
   function onChange(callback) {
     _listeners.push(callback);
   }
@@ -199,6 +231,7 @@ var PlainTextTool = (function () {
 
   return {
     execute: execute,
+    executeManual: executeManual,
     executeLocal: executeLocal,
     getResult: getResult,
     setMode: setMode,
@@ -207,6 +240,8 @@ var PlainTextTool = (function () {
     isMergeBlankLines: isMergeBlankLines,
     setKeepLinkURLs: setKeepLinkURLs,
     isKeepLinkURLs: isKeepLinkURLs,
+    setManualText: setManualText,
+    getManualText: getManualText,
     onChange: onChange,
     copyToClipboard: TextFlow.copyToClipboard,
     downloadFile: TextFlow.downloadFile

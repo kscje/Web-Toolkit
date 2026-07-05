@@ -91,6 +91,9 @@
     dom.mdNoSelectionBanner = $('#mdNoSelectionBanner');
     dom.ptResultArea = $('#ptResultArea');
     dom.ptPreview = $('#ptPreview');
+    dom.ptManualPanel = $('#ptManualPanel');
+    dom.ptManualInput = $('#ptManualInput');
+    dom.ptManualCharCount = $('#ptManualCharCount');
     dom.btnConvertText = $('#viewMarkdown .btn-text');
     dom.btnOpenFullSettings = $('#btnOpenFullSettings');
     dom.toolGrid = $('#toolGrid');
@@ -319,6 +322,7 @@
     $('#cardPlainText').addEventListener('click', function () {
       showView('plaintext');
       document.querySelector('#viewPlainText .mode-pill[data-mode="selected"]').classList.add('active');
+      document.querySelector('#viewPlainText .mode-pill[data-mode="manual"]').classList.remove('active');
       document.querySelector('#viewPlainText .mode-pill[data-mode="full"]').classList.remove('active');
       ptMode = 'selected';
 
@@ -580,11 +584,15 @@
 
   function executePlainTextExtract() {
     setStatus(I18n.t('tools.plaintext.status_extracting'));
-    dom.ptPreview.textContent = I18n.t('tools.plaintext.placeholder_loading');
+    dom.ptPreview.textContent = ptMode === 'manual' ? '' : I18n.t('tools.plaintext.placeholder_loading');
     dom.ptResultArea.classList.add('show');
     dom.ptPreview.classList.remove('has-content');
 
-    PlainTextTool.execute(ptMode).then(function (data) {
+    var run = ptMode === 'manual' && dom.ptManualInput
+      ? PlainTextTool.executeManual(dom.ptManualInput.value)
+      : PlainTextTool.execute(ptMode);
+
+    run.then(function (data) {
       dom.ptPreview.textContent = data.text || '';
       dom.ptPreview.classList.add('has-content');
       setStatus(I18n.t('tools.plaintext.status_done'));
@@ -595,6 +603,14 @@
   }
 
   var _ptEventsBound = false;
+  function updatePlainTextManualPanel() {
+    if (!dom.ptManualPanel) return;
+    dom.ptManualPanel.style.display = ptMode === 'manual' ? '' : 'none';
+    if (dom.ptManualCharCount && dom.ptManualInput) {
+      dom.ptManualCharCount.textContent = String(dom.ptManualInput.value.length);
+    }
+  }
+
   function plainTextViewInit() {
     if (!_ptEventsBound) {
       _ptEventsBound = true;
@@ -604,9 +620,18 @@
           pill.classList.add('active');
           ptMode = pill.dataset.mode;
           PlainTextTool.setMode(ptMode);
+          updatePlainTextManualPanel();
           executePlainTextExtract();
         });
       });
+
+      if (dom.ptManualInput) {
+        dom.ptManualInput.addEventListener('input', function () {
+          updatePlainTextManualPanel();
+          if (ptMode !== 'manual') return;
+          executePlainTextExtract();
+        });
+      }
 
       $('#ptMergeLinesToggle').addEventListener('change', function () {
         PlainTextTool.setMergeBlankLines(this.checked);
@@ -643,6 +668,7 @@
       });
     }
 
+    updatePlainTextManualPanel();
     executePlainTextExtract();
   }
 
