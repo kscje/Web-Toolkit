@@ -824,30 +824,33 @@ function drawScreenshotSettings(ctx, w, h) {
 function drawScreenshotHomeZh(ctx, w, h) {
   drawBrowserChrome(ctx, w, h, 'https://example.com/article');
 
-  const pw = 340, ph = 480;
-  const px = (w - pw) / 2, py = (h - ph) / 2 + 20;
+  const pw = 500, ph = 620;
+  const px = (w - pw) / 2, py = 96;
 
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
-  roundRect(ctx, px, py, pw, ph, 16);
+  roundRect(ctx, px, py, pw, ph, 20);
   ctx.fill();
-  ctx.shadowColor = 'rgba(0,0,0,0.15)';
-  ctx.shadowBlur = 30;
-  ctx.shadowOffsetY = 10;
+  ctx.shadowColor = 'rgba(26,29,38,0.18)';
+  ctx.shadowBlur = 42;
+  ctx.shadowOffsetY = 18;
   ctx.fill();
   ctx.shadowColor = 'transparent';
 
-  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 50);
+  const hGrad = ctx.createLinearGradient(px, py, px + pw, py + 70);
   hGrad.addColorStop(0, BRAND.primary);
   hGrad.addColorStop(1, BRAND.accent);
   ctx.fillStyle = hGrad;
   ctx.beginPath();
-  roundRect(ctx, px, py, pw, 50, {tl: 16, tr: 16, bl: 0, br: 0});
+  roundRect(ctx, px, py, pw, 70, {tl: 20, tr: 20, bl: 0, br: 0});
   ctx.fill();
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 14px sans-serif';
-  ctx.fillText('文本工具箱', px + 18, py + 32);
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('文本工具箱', px + 28, py + 43);
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('即选即用的网页文本处理工具集', px + 28, py + 62);
 
   const tools = [
     { icon: '📊', name: '字数统计', color: '#eef0ff', text: '#4361ee' },
@@ -860,58 +863,58 @@ function drawScreenshotHomeZh(ctx, w, h) {
     { icon: '😄', name: 'Emoji转换', color: '#fffdf0', text: '#f0b400' }
   ];
 
-  const cols = 3, gap = 10, cardW = (pw - 36 - gap * 2) / cols;
+  const cols = 3, gap = 12, cardW = (pw - 56 - gap * 2) / cols;
   tools.forEach((tool, i) => {
     const col = i % cols, row = Math.floor(i / cols);
-    const cx = px + 18 + col * (cardW + gap);
-    const cy = py + 65 + row * (cardW + gap);
+    const cx = px + 28 + col * (cardW + gap);
+    const cy = py + 104 + row * (cardW + gap);
 
     ctx.fillStyle = '#ffffff';
     ctx.strokeStyle = '#e7eaf0';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    roundRect(ctx, cx, cy, cardW, cardW, 12);
+    roundRect(ctx, cx, cy, cardW, cardW, 16);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = tool.color;
     ctx.beginPath();
-    roundRect(ctx, cx + cardW/2 - 16, cy + 14, 32, 32, 8);
+    roundRect(ctx, cx + cardW/2 - 24, cy + 24, 48, 48, 12);
     ctx.fill();
 
     ctx.fillStyle = tool.text;
-    ctx.font = '16px sans-serif';
+    ctx.font = '24px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(tool.icon, cx + cardW/2, cy + 36);
+    ctx.fillText(tool.icon, cx + cardW/2, cy + 58);
     ctx.textAlign = 'left';
 
     ctx.fillStyle = '#1a1d26';
-    ctx.font = 'bold 10px sans-serif';
+    ctx.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(tool.name, cx + cardW/2, cy + cardW - 14);
+    ctx.fillText(tool.name, cx + cardW/2, cy + cardW - 24);
     ctx.textAlign = 'left';
   });
 
-  const ccy = py + 65 + 3 * (cardW + gap) + 10;
+  const ccy = py + 104 + 3 * (cardW + gap) + 12;
   ctx.fillStyle = '#fafbfc';
   ctx.strokeStyle = '#e7eaf0';
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
-  roundRect(ctx, px + 18, ccy, pw - 36, 40, 10);
+  roundRect(ctx, px + 28, ccy, pw - 56, 48, 14);
   ctx.fill();
   ctx.stroke();
   ctx.setLineDash([]);
 
   ctx.fillStyle = '#9099a8';
-  ctx.font = '12px sans-serif';
+  ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('更多工具即将推出…', px + pw/2, ccy + 25);
+  ctx.fillText('更多工具即将推出…', px + pw/2, ccy + 31);
   ctx.textAlign = 'left';
 
   ctx.fillStyle = '#1a1d26';
-  ctx.font = 'bold 18px sans-serif';
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('工具面板首页 — 丰富的工具集合', w / 2, h - 30);
+  ctx.fillText('工具面板首页 — 丰富的工具集合', w / 2, h - 34);
   ctx.textAlign = 'left';
 }
 

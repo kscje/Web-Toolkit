@@ -4,7 +4,7 @@
     "description": "Extension name displayed in the Chrome Web Store and browser toolbar"
   },
   "appDesc": {
-    "message": "Lightweight web text toolkit: word count, Markdown export, plain text, QR code, case converter & more. Instant, private, modular.",
+    "message": "Web text toolkit for word count, Markdown export, plain text, web clipping, QR codes, case conversion and local text processing.",
     "description": "Extension description shown in the Chrome Web Store (max 132 characters)"
   }
 }

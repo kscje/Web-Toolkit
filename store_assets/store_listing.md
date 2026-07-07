@@ -1,6 +1,6 @@
 # TextFlow / 文本工具箱 — Chrome Web Store 发布资料包
 
-> 版本：V1.0 | 更新日期：2026-05-17
+> 版本：V1.1.0 | 更新日期：2026-07-07
 > 本文件包含 Chrome Web Store 上架所需的全部文案与说明资料
 
 ---
@@ -8,10 +8,10 @@
 ## 1. 扩展摘要简介 (Short Description)
 
 ### 中文版本（132字符以内）
-轻量级网页文本工具箱：字数统计、Markdown导出、纯文本提取、二维码生成、大小写转换等8大工具，即选即用，隐私优先。
+网页文本工具箱：字数统计、Markdown导出、纯文本提取、网页剪藏、二维码、大小写转换等工具，本地处理，选中即用。
 
 ### English Version (within 132 characters)
-Lightweight web text toolkit: word count, Markdown export, plain text extract, QR code, case converter & more. Instant, private, modular.
+Web text toolkit for word count, Markdown export, plain text, web clipping, QR codes, case conversion and local text processing.
 
 ---
 
@@ -19,105 +19,139 @@ Lightweight web text toolkit: word count, Markdown export, plain text extract, Q
 
 ### 中文版本（5000字符以内）
 
-**TextFlow（文本工具箱）** 是一款专为内容创作者、学生、开发者和日常浏览者打造的轻量级 Chrome 浏览器扩展。无需切换应用或打开在线工具，在浏览器内一键完成网页内容的统计、转换与提取。
+**TextFlow（文本工具箱）** 是一款面向内容整理、写作编辑、学习研究和日常办公的 Chrome 网页文本工具箱。浏览网页时，你可以直接对选中文本或当前页面进行字数统计、Markdown 导出、纯文本提取、网页剪藏、二维码生成、大小写转换、文本去重排序等操作，减少在多个在线工具之间来回切换。
 
-**核心功能**
+**主要功能**
 
-📊 **字数统计** — 支持选中内容与全页面两种模式，精准统计中文字数、英文单词数、字符数（含/不含空格）、段落数、句子数，以及页面图片、视频、链接数量。写作、翻译、编辑时的效率利器。
+📊 **字数统计**
+统计选中文本、手动输入内容或整个页面的字符数、不含空格字符数、中文字符数、英文单词数、段落数、句子数，并可查看页面图片、视频、链接数量。适合文章编辑、翻译校对、内容审核和网页内容分析。
 
-📝 **导出 Markdown** — 将网页内容一键转换为标准 Markdown 格式，支持标题、列表、链接、图片、表格、代码块等完整语法。提供源码/预览双视图，支持一键复制或下载 `.md` 文件，笔记归档更方便。
+📝 **导出 Markdown**
+将选中内容或整个页面转换为 Markdown，支持源码/预览切换，并可复制 Markdown 源码或下载 `.md` 文件。适合把网页资料整理到笔记、知识库、博客草稿或开发文档中。
 
-📋 **纯文本提取** — 智能过滤广告、导航栏、侧边栏、评论区等干扰元素，提取干净正文。可选合并空行、保留链接 URL，让阅读与引用更纯粹。
+📋 **纯文本提取**
+从选中内容、手动输入内容或整个页面中提取纯净文本，可合并连续空行，也可在链接文本后保留原始 URL。适合清理网页复制内容、保存资料摘录和整理引用文本。
 
-🔲 **二维码生成** — 为选中文字或当前页面 URL 快速生成高清二维码，支持复制到剪贴板或下载保存，分享传播更便捷。
+🔖 **网页剪藏**
+保存当前页面或选中的网页文本，自动保留标题、来源链接和域名；支持添加标签、备注，查看最近剪藏，并将剪藏内容导出为 Markdown 或 TXT 文件。适合临时收集网页资料、阅读摘录和研究素材。
 
-🔤 **大小写/风格转换** — 支持全大写、全小写、句首大写、单词首字母大写、驼峰命名、帕斯卡命名、下划线命名、短横线命名、常量命名等 9 种风格，开发写作两相宜。
+📑 **去重/排序**
+按行处理文本，支持去重、升序、降序、去重后升序、去重后降序，并可忽略空白行。适合整理关键词、名单、链接列表、数据片段和重复文本。
 
-🔄 **文本反转** — 提供全部反转、单词反转、单词内反转、镜像反转 4 种模式，趣味与实用兼具。
+🔤 **大小写/风格转换**
+支持全大写、全小写、句首大写、单词首字母大写、camelCase、PascalCase、snake_case、kebab-case、CONSTANT_CASE 等常见格式。适合写作排版、变量命名和批量文本格式调整。
 
-📑 **去重/排序** — 对文本按行去重、升序/降序排序，支持组合操作与忽略空白行，数据整理更高效。
+🔄 **文本反转**
+支持全部反转、单词顺序反转、单词内字符反转和镜像反转，适合特殊文本处理、测试数据生成和趣味表达。
 
-😄 **Emoji 转换** — 将文字转换为 Emoji 关键词、区域指示符、带圈字母、数字 Emoji 及 Emoji 装饰，让表达更生动。
+🔲 **二维码生成**
+将选中文本或当前页面 URL 生成二维码，支持复制二维码或下载图片，方便跨设备打开网页、分享链接或保存文本入口。
 
-**产品亮点**
+😄 **Emoji 转换**
+支持关键词替换、区域指示符、带圈字母、数字 Emoji 和 Emoji 装饰等转换方式，适合社交文案、标题装饰和轻量趣味排版。
 
-✅ **即选即用** — 选中网页文字后点击插件图标，3 步内完成操作
-✅ **隐私优先** — 核心数据处理完全在本地浏览器完成，不上传任何内容
-✅ **模块独立** — 8 大工具互不依赖，可在设置中自由启用/禁用、拖拽排序
-✅ **右键快捷** — 选中文本后右键即可触发字数统计、Markdown 导出等操作
-✅ **双语界面** — 支持中文与 English 一键切换
-✅ **智能过滤** — Markdown 与纯文本提取自动移除广告、导航等干扰内容
-✅ **轻量高效** — 弹窗打开 <200ms，处理响应 <500ms，不占内存
+**为什么选择 TextFlow**
 
-**适用场景**
+- **选中即用**：在网页中选中文本后打开扩展，即可处理当前内容。
+- **覆盖常见文本工作流**：统计、提取、转换、剪藏、导出、分享集中在一个扩展中。
+- **支持右键菜单**：可通过右键快速进行字数统计、保存 Markdown、提取纯文本、生成二维码、文本反转、Emoji 转换和网页剪藏。
+- **本地优先处理**：核心文本处理在浏览器本地完成，不需要把文本发送到在线转换网站。
+- **可自定义工具面板**：在设置中启用或禁用功能模块，并调整工具显示顺序。
+- **中英文界面**：支持中文和 English，适合双语使用场景。
 
-- 内容创作者统计文章字数、导出网页素材为 Markdown
-- 学生与研究者提取网页正文、整理资料引用
-- 开发者转换变量命名风格、提取技术文档
-- 运营编辑审核页面内容、生成分享二维码
-- 日常用户去除广告干扰、获取纯净阅读文本
+**适合这些用户**
+
+- 内容创作者：统计文章字数，保存网页素材，导出 Markdown 草稿。
+- 学生和研究者：剪藏网页资料，提取正文，整理引用和备注。
+- 开发者：转换命名风格，清理列表，保存技术文档片段。
+- 运营和编辑：审核网页文本，整理关键词，生成分享二维码。
+- 日常用户：复制更干净的文本，快速保存页面链接和摘录。
 
 **使用方式**
 
-1. 在任意网页选中需要处理的文本（可选）
-2. 点击浏览器工具栏的 TextFlow 图标打开工具面板
-3. 选择所需工具，即刻查看结果或导出内容
+1. 在任意普通网页中选中文本，或直接打开需要处理的页面。
+2. 点击浏览器工具栏中的 TextFlow 图标。
+3. 选择需要的工具，查看结果、复制内容或下载文件。
 
-**权限说明**
+**权限与隐私说明**
 
-本扩展仅申请必要的最小权限：`activeTab`（访问当前页面）、`storage`（本地存储偏好设置）、`clipboardWrite`（复制结果到剪贴板）、`contextMenus`（右键菜单）。所有数据处理均在本地完成，绝不收集、上传或共享您的任何浏览数据。
+TextFlow 仅请求实现功能所需的 Chrome 扩展权限：
+
+- `activeTab`：在你主动使用扩展时读取当前标签页内容。
+- `storage`：在本地保存语言、工具开关、排序、剪藏和偏好设置。
+- `clipboardWrite`：将处理结果、文本或二维码复制到剪贴板。
+- `contextMenus`：提供选中文本后的右键快捷入口。
+
+核心文本处理、网页剪藏和偏好设置默认保存在你的浏览器本地。扩展不会出售用户数据，也不会用于广告追踪。只有当你主动提交“想要新功能？”建议时，建议内容以及当前页面标题和域名会通过 HTTPS 发送到开发者后端，用于理解需求场景和改进产品。
 
 ---
 
 ### English Version (within 5,000 characters)
 
-**TextFlow** is a lightweight Chrome extension built for content creators, students, developers, and everyday browsers. No need to switch apps or open online tools — process, convert, and extract web content directly in your browser with one click.
+**TextFlow** is a Chrome web text toolkit for writers, students, researchers, developers, editors, and everyday browsing. It helps you count, extract, convert, clip, export, clean, and share web text without switching between multiple online tools.
 
-**Core Features**
+**Key Features**
 
-📊 **Word Count** — Supports both selection and full-page modes. Accurately counts Chinese characters, English words, total characters (with/without spaces), paragraphs, sentences, plus images, videos, and links on the page. An essential tool for writing, translation, and editing.
+📊 **Word Count**
+Count selected text, manual input, or a full page. View total characters, characters without spaces, Chinese characters, English words, paragraphs, sentences, plus page images, videos, and links.
 
-📝 **Markdown Export** — Convert web content to standard Markdown format with full support for headings, lists, links, images, tables, and code blocks. Features source/preview dual view with one-click copy or `.md` download for easy note archiving.
+📝 **Markdown Export**
+Convert selected content or a full page to Markdown. Switch between source and preview, copy Markdown source, or download a `.md` file for notes, documentation, blog drafts, and knowledge bases.
 
-📋 **Plain Text Extractor** — Intelligently filters ads, navigation bars, sidebars, comment sections, and other distracting elements to extract clean body text. Optional merge blank lines and preserve link URLs for pure reading and citation.
+📋 **Plain Text Extractor**
+Extract clean text from a selection, manual input, or the current page. Merge blank lines and optionally keep original URLs after link text.
 
-🔲 **QR Code Generator** — Quickly generate high-definition QR codes from selected text or the current page URL. Copy to clipboard or download for easy sharing.
+🔖 **Web Clipper**
+Save the current page or selected text with title, source URL, and domain. Add tags and notes, browse recent clips, and export saved clips as Markdown or TXT.
 
-🔤 **Case Converter** — Switch between 9 naming styles: uppercase, lowercase, sentence case, title case, camelCase, PascalCase, snake_case, kebab-case, and CONSTANT_CASE. Perfect for developers and writers.
+📑 **Text Dedup / Sort**
+Process line-based text with deduplication, ascending sort, descending sort, dedup + ascending, dedup + descending, and optional blank-line removal.
 
-🔄 **Text Reverser** — Four reversal modes: reverse all, reverse words, reverse internal, and mirror reverse. Fun and practical.
+🔤 **Case Converter**
+Convert text to uppercase, lowercase, sentence case, title case, camelCase, PascalCase, snake_case, kebab-case, or CONSTANT_CASE.
 
-📑 **Text Dedup / Sort** — Deduplicate and sort text lines with combined operations and optional blank line ignoring. Efficient data cleanup.
+🔄 **Text Reverser**
+Reverse all characters, reverse word order, reverse characters inside words, or create mirrored text.
 
-😄 **Emoji Converter** — Transform text into emoji keywords, regional indicators, circled letters, number emojis, and emoji art for more expressive communication.
+🔲 **QR Code Generator**
+Generate a QR code from selected text or the current page URL. Copy the QR code or download it as an image.
 
-**Highlights**
+😄 **Emoji Converter**
+Convert text into emoji keywords, regional indicators, circled letters, number emoji, or emoji decorations.
 
-✅ **Instant Use** — Select text on any page, open the extension, and complete actions in under 3 steps
-✅ **Privacy First** — All core data processing happens locally in your browser; nothing is uploaded
-✅ **Modular Design** — 8 independent tools; enable/disable and reorder freely in settings
-✅ **Context Menu** — Right-click selected text for quick word count, Markdown export, and more
-✅ **Bilingual UI** — Switch between Chinese and English instantly
-✅ **Smart Filtering** — Auto-removes ads and distractions for Markdown and plain text extraction
-✅ **Lightweight & Fast** — Popup opens in <200ms, processing completes in <500ms, minimal memory usage
+**Why Use TextFlow**
 
-**Use Cases**
+- **Selection-first workflow**: Select text on a web page, open the extension, and process it immediately.
+- **Common text tools in one place**: Count, extract, convert, clip, export, clean, and share text from a single popup.
+- **Context menu shortcuts**: Right-click selected text to count words, save Markdown, extract plain text, generate QR codes, reverse text, convert emoji, or save a web clip.
+- **Local-first processing**: Core text processing runs in your browser instead of sending content to an online converter.
+- **Customizable tool panel**: Enable, disable, and reorder tools in settings.
+- **Bilingual interface**: Switch between English and Chinese.
 
-- Content creators counting words and exporting web content to Markdown
-- Students and researchers extracting clean text and organizing citations
-- Developers converting naming conventions and extracting documentation
-- Marketing editors reviewing content and generating shareable QR codes
-- Everyday users removing ad clutter for clean reading
+**Good For**
+
+- Writers and content creators: count words, collect web material, export Markdown drafts.
+- Students and researchers: clip sources, extract text, organize notes and references.
+- Developers: convert naming styles, clean line-based text, save documentation snippets.
+- Editors and marketers: review web copy, organize keywords, create QR codes for sharing.
+- Everyday users: copy cleaner text and save page links or excerpts quickly.
 
 **How to Use**
 
-1. Select text on any web page (optional)
-2. Click the TextFlow icon in your browser toolbar
-3. Choose a tool and view results or export instantly
+1. Select text on a regular web page, or open the page you want to process.
+2. Click the TextFlow icon in the browser toolbar.
+3. Choose a tool, then copy results or download files as needed.
 
-**Permissions**
+**Permissions and Privacy**
 
-This extension requests only the minimum required permissions: `activeTab` (access current page), `storage` (save preferences locally), `clipboardWrite` (copy results), and `contextMenus` (right-click menu). All data is processed locally. We never collect, upload, or share your browsing data.
+TextFlow requests only the Chrome extension permissions required for its features:
+
+- `activeTab`: read the current tab when you actively use the extension.
+- `storage`: save language, tool settings, order, clips, and preferences locally.
+- `clipboardWrite`: copy processed text, results, or QR codes to the clipboard.
+- `contextMenus`: provide right-click shortcuts for selected text.
+
+Core text processing, web clips, and preferences are stored locally in your browser by default. The extension does not sell user data or use it for ad tracking. If you voluntarily submit a feature suggestion, the suggestion text plus current page title and domain are sent via HTTPS to the developer backend to understand product needs and improve TextFlow.
 
 ---
 
@@ -188,7 +222,7 @@ TextFlow（以下简称"本扩展"或"我们"）高度重视用户的隐私保�
 
 如果您对本隐私政策有任何疑问、建议或投诉，请通过以下方式联系我们：
 
-- **开发者邮箱**：textflow@example.com（请替换为实际邮箱）
+- **开发者邮箱**：kscj.e@live.com
 - **问题反馈**：通过扩展弹窗底部的"想要新功能？"建议入口提交
 
 **9. 合规声明**
@@ -266,7 +300,7 @@ We may update this Privacy Policy from time to time. Any significant changes wil
 
 If you have any questions, suggestions, or complaints about this Privacy Policy, please contact us:
 
-- **Developer Email**: textflow@example.com (please replace with actual email)
+- **Developer Email**: kscj.e@live.com
 - **Feedback**: Submit via the "Want a new feature?" suggestion entry at the bottom of the extension popup
 
 **9. Compliance Statement**
@@ -282,10 +316,10 @@ This extension strictly complies with:
 ## 4. 关键词标签 (Search Keywords)
 
 ### 中文关键词
-文本工具箱, 字数统计, Markdown导出, 纯文本提取, 二维码生成, 大小写转换, 文本反转, 去重排序, Emoji转换, 网页工具, Chrome扩展, 浏览器插件, 文本处理, 内容提取, 写作辅助, 开发者工具, 笔记工具, 网页转Markdown, 字符统计, 文本格式化
+文本工具箱, 字数统计, Markdown导出, 纯文本提取, 网页剪藏, 二维码生成, 大小写转换, 文本反转, 去重排序, Emoji转换, 网页工具, Chrome扩展, 浏览器插件, 文本处理, 内容提取, 写作辅助, 开发者工具, 笔记工具, 网页转Markdown, 字符统计, 文本格式化, 资料整理
 
 ### English Keywords
-text toolkit, word count, Markdown export, plain text extractor, QR code generator, case converter, text reverser, deduplicate sort, emoji converter, browser extension, Chrome extension, text processing, content extraction, writing assistant, developer tools, note taking, web to Markdown, character counter, text formatter, web content tools
+text toolkit, word count, Markdown export, plain text extractor, web clipper, QR code generator, case converter, text reverser, deduplicate sort, emoji converter, browser extension, Chrome extension, text processing, content extraction, writing assistant, developer tools, note taking, web to Markdown, character counter, text formatter, web content tools
 
 ---
 
@@ -293,7 +327,7 @@ text toolkit, word count, Markdown export, plain text extractor, QR code generat
 
 - **开发者名称**：TextFlow Team
 - **官方网站**：（待填写）
-- **支持邮箱**：textflow@example.com（请替换为实际邮箱）
+- **支持邮箱**：kscj.e@live.com
 - **隐私政策链接**：（上架后填写 Chrome Web Store 隐私政策 URL）
 
 ---
@@ -301,8 +335,8 @@ text toolkit, word count, Markdown export, plain text extractor, QR code generat
 ## 6. 截图说明文字 (Screenshot Captions)
 
 ### 截图1 - 工具面板首页
-- **中文**：工具面板首页 — 8大核心工具卡片，清晰直观的网格布局
-- **English**：Tool Panel Home — 8 core tool cards in a clean grid layout
+- **中文**：工具面板首页 — 常用文本工具卡片，清晰直观的网格布局
+- **English**：Tool Panel Home — Common text tools in a clean grid layout
 
 ### 截图2 - 字数统计
 - **中文**：字数统计 — 选中/全页双模式，多维度数据一目了然
