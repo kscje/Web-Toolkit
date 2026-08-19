@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>复刻 chatgpt.com 会话页 DOM 结构</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; display: flex; }
+    nav { width: 260px; background: #1e1f24; color: #ececf1; padding: 8px; }
+    main { flex: 1; padding: 16px; }
+    article { margin-bottom: 24px; }
+    .markdown.prose p { margin: 8px 0; }
+    pre { background: #0d0d0d; color: #fff; padding: 12px; border-radius: 8px; }
+    footer { position: fixed; bottom: 0; width: 60%; }
+    .ProseMirror { border: 1px solid #ccc; padding: 10px; }
+    .shadow-lg { display: inline-block; }
+  </style>
+</head>
+<body>
+  <nav class="h-full w-60 flex-none">
+    <div class="flex flex-col gap-2">
+      <a href="/"><span>New chat</span></a>
+      <a href="/c/6a8529c2"><span>关于快速排序的讨论</span></a>
+      <a href="/c/other"><span>另一个会话</span></a>
+    </div>
+  </nav>
+  <div class="flex h-full w-full flex-1 flex-col">
+    <header class="sticky top-0">
+      <button class="model-selector">ChatGPT <span>4o</span></button>
+    </header>
+    <main class="relative flex h-full w-full flex-1 overflow-y-auto">
+      <div class="flex w-full flex-col">
+        <article data-testid="conversation-turn-1">
+          <div class="m-auto text-base py-2">
+            <div class="mx-auto flex flex-1 text-base gap-4">
+              <div class="flex-shrink-0"><svg width="28" height="28"><circle cx="14" cy="14" r="12"></circle></svg></div>
+              <div class="flex w-full flex-col">
+                <div data-message-author-role="user" data-message-id="u-001">
+                  <div class="flex w-full flex-col">你好，请帮我用 JavaScript 写一个快速排序，并解释时间复杂度。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article data-testid="conversation-turn-2">
+          <div class="m-auto text-base py-2">
+            <div class="mx-auto flex flex-1 gap-4">
+              <div class="flex-shrink-0"><svg width="28" height="28"><rect width="24" height="24"></rect></svg></div>
+              <div class="flex w-full flex-col">
+                <div data-message-author-role="assistant" data-message-id="a-001">
+                  <div class="markdown prose">
+                    <p>好的，下面是一个 <strong>JavaScript</strong> 版本的快速排序实现：</p>
+                    <pre><code class="language-js">function quickSort(arr) {
+  if (arr.length &lt;= 1) return arr;
+  const pivot = arr[Math.floor(arr.length / 2)];
+  const left = arr.filter(x =&gt; x &lt; pivot);
+  const mid = arr.filter(x =&gt; x === pivot);
+  const right = arr.filter(x =&gt; x &gt; pivot);
+  return [...quickSort(left), ...mid, ...quickSort(right)];
+}</code></pre>
+                    <p>时间复杂度分析：</p>
+                    <ul>
+                      <li>平均情况：<em>O(n log n)</em></li>
+                      <li>最坏情况：O(n²)（例如已排序数组）</li>
+                    </ul>
+                    <p>更多细节可参考 <a href="https://en.wikipedia.org/wiki/Quicksort">维基百科</a>。</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button class="copy-button shadow-lg"><svg width="16" height="16"><path d="M0 0"></path></svg></button>
+                    <button class="regenerate-button">↻</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article data-testid="conversation-turn-3">
+          <div class="m-auto text-base py-2">
+            <div class="mx-auto flex flex-1 gap-4">
+              <div class="flex w-full flex-col">
+                <div data-message-author-role="user" data-message-id="u-002">
+                  <div class="flex w-full flex-col">能不能改成原地排序的版本？</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article data-testid="conversation-turn-4">
+          <div class="m-auto text-base py-2">
+            <div class="flex w-full flex-col">
+              <div data-message-author-role="assistant" data-message-id="a-002">
+                <div class="markdown prose">
+                  <p>可以，下面是 <strong>原地（in-place）</strong>版本，使用 Lomuto 分区方案：</p>
+                  <pre><code class="language-js">function quickSortInPlace(arr, lo = 0, hi = arr.length - 1) {
+  if (lo &gt;= hi) return arr;
+  const p = partition(arr, lo, hi);
+  quickSortInPlace(arr, lo, p - 1);
+  quickSortInPlace(arr, p + 1, hi);
+  return arr;
+}</code></pre>
+                  <blockquote><p>原地排序将空间复杂度降到 O(log n)（递归栈）。</p></blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+    <footer class="sticky bottom-0">
+      <div class="ProseMirror" id="prompt-textarea" contenteditable="true">Ask anything</div>
+      <button class="send-button">Send</button>
+    </footer>
+  </div>
+
+  <script>
+    window.chrome = {
+      runtime: {
+        onMessage: {
+          addListener: function (fn) { window.__contentListener = fn; }
+        }
+      }
+    };
+  </script>
+  <script src="/utils/core.js"></script>
+  <script src="/content.js"></script>
+  <script src="/tools/markdown.js"></script>
+</body>
+</html>

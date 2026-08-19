@@ -43,9 +43,10 @@
     },
     "markdown": {
       "name": "Markdown Export",
-      "desc": "Convert selected content to Markdown, copy or download as .md file",
+      "desc": "Convert selected content or full page to Markdown, copy or download as .md file",
       "title": "📝 Markdown Export",
       "mode_selected": "Selection",
+      "mode_full": "Full Page",
       "btn_convert": "Convert",
       "tab_source": "Source",
       "tab_preview": "Preview",

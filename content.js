@@ -139,7 +139,38 @@
     return analyzeText(text);
   }
 
+  function findConversationContainer() {
+    let turns = document.querySelectorAll('article[data-testid^="conversation-turn"]');
+    if (turns.length < 2) {
+      turns = document.querySelectorAll('article');
+    }
+    if (turns.length < 2) return null;
+
+    const parent = turns[0].parentElement;
+    if (!parent) return null;
+
+    let contained = 0;
+    turns.forEach(function (t) {
+      if (parent.contains(t)) contained++;
+    });
+    if (contained !== turns.length) return null;
+    if (parent.textContent.trim().length <= 100) return null;
+
+    return parent;
+  }
+
   function getPageMainContentHTML() {
+    const conversationContainer = findConversationContainer();
+    if (conversationContainer) {
+      const conversationClone = conversationContainer.cloneNode(true);
+      CONTENT_FILTER_SELECTORS.forEach(function (s) {
+        try {
+          conversationClone.querySelectorAll(s).forEach(function (child) { child.remove(); });
+        } catch (e) {}
+      });
+      return conversationClone.innerHTML;
+    }
+
     const selectors = ['article', 'main', '[role="main"]', '.post-content', '.article-content', '.entry-content', '#content', '.content'];
     for (let i = 0; i < selectors.length; i++) {
       const el = document.querySelector(selectors[i]);
@@ -237,25 +268,28 @@
       }
 
       case 'saveMarkdown': {
+        const mdMode = payload.mode || 'selected';
         const selectedHTML = getSelectedHTML();
         const hasSelection = selectedHTML !== null && selectedHTML.trim().length > 0;
 
-        if (!hasSelection) {
-          sendResponse({
-            success: false,
-            error: 'No content selected. Please select content on the page first.',
-            requestId: request.requestId
-          });
-          break;
+        let htmlContent = '';
+        let contentMode = '';
+
+        if (mdMode === 'selected' && hasSelection) {
+          htmlContent = selectedHTML;
+          contentMode = 'selected';
+        } else {
+          htmlContent = getPageMainContentHTML();
+          contentMode = 'full';
         }
 
-        const htmlContent = resolveImageURLs(selectedHTML);
+        htmlContent = resolveImageURLs(htmlContent);
 
         sendResponse({
           success: true,
           data: {
             html: htmlContent,
-            mode: 'selected',
+            mode: contentMode,
             pageTitle: getPageTitle(),
             pageURL: getPageURL()
           },
