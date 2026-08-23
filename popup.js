@@ -5,6 +5,7 @@
   var wcMode = 'selected';
   var mdMode = 'selected';
   var ptMode = 'selected';
+  var mdMode = 'selected';
   var toastTimer = null;
   var dom = {};
   var _selectionCache = { hasSelection: false, text: '', html: '' };
@@ -319,6 +320,9 @@
 
     $('#cardMarkdown').addEventListener('click', function () {
       showView('markdown');
+      document.querySelector('#viewMarkdown .mode-pill[data-mode="selected"]').classList.add('active');
+      document.querySelector('#viewMarkdown .mode-pill[data-mode="full"]').classList.remove('active');
+      mdMode = 'selected';
 
       ensureModule('markdown').then(function () {
         markdownViewInit();
@@ -497,6 +501,17 @@
 
     if (!_mdEventsBound) {
       _mdEventsBound = true;
+
+      $$('#viewMarkdown .mode-pill').forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          if (pill.classList.contains('active')) return;
+          $$('#viewMarkdown .mode-pill').forEach(function (p) { p.classList.remove('active'); });
+          pill.classList.add('active');
+          mdMode = pill.dataset.mode || 'selected';
+          checkSelectionAndExecute();
+        });
+      });
+
       $('#mdPreserveIndentToggle').addEventListener('change', function () {
         MarkdownTool.setPreserveIndent(this.checked);
         if (mdMode === 'full' || dom.mdNoSelectionBanner.style.display === 'none') {
@@ -614,6 +629,14 @@
 
     function checkSelectionAndExecute(allowAutoFull) {
       allowAutoFull = allowAutoFull !== false;
+
+      if (mdMode === 'full') {
+        dom.mdNoSelectionBanner.style.display = 'none';
+        dom.mdResultArea.classList.add('show');
+        executeMarkdown();
+        return;
+      }
+
       if (TextFlow.isChromeExtension()) {
         var cache = getSelectionCache();
         if (cache.hasSelection) {

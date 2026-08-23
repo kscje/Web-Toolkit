@@ -133,8 +133,6 @@ var MarkdownTool = (function () {
       case 'pre': {
         var codeNode = node.querySelector('code');
         var codeText = codeNode ? processNode(codeNode) : processChildren(node);
-        codeText = codeText.replace(/<br\s*\/?>/gi, '\n');
-        codeText = codeText.replace(/<[^>]+>/g, '');
         return '\n```\n' + codeText.trim() + '\n```\n';
       }
 

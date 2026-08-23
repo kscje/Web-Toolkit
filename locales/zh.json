@@ -46,7 +46,7 @@
     },
     "markdown": {
       "name": "导出Markdown",
-      "desc": "将选中内容转换为 Markdown，一键复制或下载 .md 文件",
+      "desc": "将选中内容或整个页面转换为 Markdown，一键复制或下载 .md 文件",
       "title": "📝 导出Markdown",
       "mode_selected": "选中内容",
       "mode_full": "整个页面",
