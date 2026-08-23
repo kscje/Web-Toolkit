@@ -1,6 +1,6 @@
 # TextFlow / 文本工具箱 — Chrome Web Store 发布资料包
 
-> 版本：V1.1.0 | 更新日期：2026-07-07
+> 版本：V1.1.1 | 更新日期：2026-08-23
 > 本文件包含 Chrome Web Store 上架所需的全部文案与说明资料
 
 ---
@@ -8,150 +8,152 @@
 ## 1. 扩展摘要简介 (Short Description)
 
 ### 中文版本（132字符以内）
-网页文本工具箱：字数统计、Markdown导出、纯文本提取、网页剪藏、二维码、大小写转换等工具，本地处理，选中即用。
+网页文本工具箱：AI对话一键导出Markdown（支持ChatGPT/Gemini/Claude/Grok），字数统计、纯文本提取、网页剪藏、二维码，本地处理。
 
 ### English Version (within 132 characters)
-Web text toolkit for word count, Markdown export, plain text, web clipping, QR codes, case conversion and local text processing.
+Web text toolkit: export AI chats (ChatGPT/Gemini/Claude/Grok) to Markdown, word count, plain text, web clipper, QR codes. Local.
 
 ---
 
 ## 2. 详细描述说明 (Detailed Description)
 
-### 中文版本（5000字符以内）
+### 中文版本（16000字符以内）
 
-**TextFlow（文本工具箱）** 是一款面向内容整理、写作编辑、学习研究和日常办公的 Chrome 网页文本工具箱。浏览网页时，你可以直接对选中文本或当前页面进行字数统计、Markdown 导出、纯文本提取、网页剪藏、二维码生成、大小写转换、文本去重排序等操作，减少在多个在线工具之间来回切换。
+**TextFlow（文本工具箱）** 是一款集 **AI 对话导出** 与 **网页文本处理** 于一体的 Chrome 浏览器扩展：可以把 ChatGPT、Gemini、Claude、Grok 等 AI 网站的对话一键导出为 Markdown，也提供字数统计、纯文本提取、网页剪藏、二维码生成、大小写转换等日常文本工具。所有处理均在浏览器本地完成，选中即用，不把你的内容上传到任何服务器。
 
-**主要功能**
+🤖 **AI 对话导出 —— 保存 AI 回答的高效方式**
+
+针对 ChatGPT、Gemini、Claude、Grok、DeepSeek、豆包、Kimi 等 AI 聊天网站深度适配。打开 AI 对话页面，点击"导出 Markdown"，即可把整段对话转换成整洁规范的文档：
+
+- **智能识别对话结构**：自动区分你的提问与 AI 的回答，过滤广告、侧边栏、推荐问题等干扰元素，导出内容干净完整；
+- **完整保留排版**：标题、列表、表格、代码块、引用、图片等格式都会转换为标准 Markdown，AI 生成的代码导出后依旧规整可用；
+- **整段或片段均可**：支持导出完整对话，也可以只选中感兴趣的几轮问答进行导出；
+- **一键复制或下载**：结果可直接复制到剪贴板，或下载 `.md` 文件，导入 Obsidian、Notion、Typora、VS Code 等工具继续编辑。
+
+无论是保存 AI 生成的方案与代码、整理提示词（Prompt）实践记录，还是归档学习调研资料，都不再需要手动逐段复制粘贴。
+
+📝 **导出 Markdown（网页转 Markdown）**
+除 AI 网站外，任意网页的文章、文档、教程都能一键转换为 Markdown：支持选中内容或整页导出，提供源码/实时预览双视图，可复制源码或下载 `.md` 文件。适合把网页资料整理进笔记软件、知识库、博客草稿或项目文档。
 
 📊 **字数统计**
-统计选中文本、手动输入内容或整个页面的字符数、不含空格字符数、中文字符数、英文单词数、段落数、句子数，并可查看页面图片、视频、链接数量。适合文章编辑、翻译校对、内容审核和网页内容分析。
-
-📝 **导出 Markdown**
-将选中内容或整个页面转换为 Markdown，支持源码/预览切换，并可复制 Markdown 源码或下载 `.md` 文件。适合把网页资料整理到笔记、知识库、博客草稿或开发文档中。
+统计选中文字、手动输入或整个页面：总字符数、不含空格字符数、中文字符数、英文单词数、段落数、句子数，还能查看页面图片、视频、链接数量。公众号写作、论文查字数、翻译计价、内容审核都用得上。
 
 📋 **纯文本提取**
-从选中内容、手动输入内容或整个页面中提取纯净文本，可合并连续空行，也可在链接文本后保留原始 URL。适合清理网页复制内容、保存资料摘录和整理引用文本。
+一键剥离网页样式、广告和隐藏字符，得到干净的纯文本；可合并连续空行、在链接后保留原始网址。复制网页内容不再带出杂乱换行和干扰信息。
 
 🔖 **网页剪藏**
-保存当前页面或选中的网页文本，自动保留标题、来源链接和域名；支持添加标签、备注，查看最近剪藏，并将剪藏内容导出为 Markdown 或 TXT 文件。适合临时收集网页资料、阅读摘录和研究素材。
+把当前页面或选中文本保存为剪藏，自动记录标题、来源链接和时间；支持添加标签与备注，随时查看最近剪藏，并可批量导出为 Markdown 或 TXT。轻量的资料收集与稍后阅读方案。
+
+🔤 **大小写/命名风格转换**
+全大写、全小写、句首大写、标题式大写，以及 camelCase、PascalCase、snake_case、kebab-case、CONSTANT_CASE 等开发者常用命名风格一键互转。
 
 📑 **去重/排序**
-按行处理文本，支持去重、升序、降序、去重后升序、去重后降序，并可忽略空白行。适合整理关键词、名单、链接列表、数据片段和重复文本。
-
-🔤 **大小写/风格转换**
-支持全大写、全小写、句首大写、单词首字母大写、camelCase、PascalCase、snake_case、kebab-case、CONSTANT_CASE 等常见格式。适合写作排版、变量命名和批量文本格式调整。
-
-🔄 **文本反转**
-支持全部反转、单词顺序反转、单词内字符反转和镜像反转，适合特殊文本处理、测试数据生成和趣味表达。
+按行去重、升序/降序排序或组合处理，可忽略空白行，适合整理关键词、名单、链接列表和数据片段。
 
 🔲 **二维码生成**
-将选中文本或当前页面 URL 生成二维码，支持复制二维码或下载图片，方便跨设备打开网页、分享链接或保存文本入口。
+把当前页面网址或任意文本生成二维码，支持复制或下载图片，扫码即可在手机上打开，跨设备分享链接更方便。
 
-😄 **Emoji 转换**
-支持关键词替换、区域指示符、带圈字母、数字 Emoji 和 Emoji 装饰等转换方式，适合社交文案、标题装饰和轻量趣味排版。
+🔄 **文本反转** 与 😄 **Emoji 转换**
+支持字符顺序、单词顺序、镜像反转；以及关键词 Emoji、带圈字母、数字 Emoji、Emoji 装饰等趣味格式，社交文案和测试数据两相宜。
 
 **为什么选择 TextFlow**
 
-- **选中即用**：在网页中选中文本后打开扩展，即可处理当前内容。
-- **覆盖常见文本工作流**：统计、提取、转换、剪藏、导出、分享集中在一个扩展中。
-- **支持右键菜单**：可通过右键快速进行字数统计、保存 Markdown、提取纯文本、生成二维码、文本反转、Emoji 转换和网页剪藏。
-- **本地优先处理**：核心文本处理在浏览器本地完成，不需要把文本发送到在线转换网站。
-- **可自定义工具面板**：在设置中启用或禁用功能模块，并调整工具显示顺序。
-- **中英文界面**：支持中文和 English，适合双语使用场景。
+- **AI 对话导出**：专为 ChatGPT、Gemini、Claude、Grok 等主流 AI 网站优化，导出格式规范、开箱即用；
+- **一个扩展替代一堆在线工具**：统计、转换、提取、剪藏、分享集中在一个弹窗里完成；
+- **选中即用 + 右键快捷菜单**：选中文本即可处理，右键菜单直达字数统计、保存 Markdown、提取纯文本等常用功能；
+- **隐私优先**：文本处理全部在浏览器本地进行，不上传、不追踪、不出售用户数据；
+- **面板可定制**：在设置中自由启用/禁用工具，拖拽调整显示顺序；
+- **中英文界面**：一键切换中文与 English。
 
-**适合这些用户**
+**适合谁使用**
 
-- 内容创作者：统计文章字数，保存网页素材，导出 Markdown 草稿。
-- 学生和研究者：剪藏网页资料，提取正文，整理引用和备注。
-- 开发者：转换命名风格，清理列表，保存技术文档片段。
-- 运营和编辑：审核网页文本，整理关键词，生成分享二维码。
-- 日常用户：复制更干净的文本，快速保存页面链接和摘录。
+- **AI 重度用户**：保存 ChatGPT、Claude、Gemini、Grok 的精彩回答，沉淀个人 AI 知识库；
+- **内容创作者与写手**：字数统计、网页素材收集、Markdown 草稿导出；
+- **学生与研究者**：剪藏文献资料、提取正文、整理引用与笔记；
+- **开发者**：导出 AI 代码回答、转换命名风格、清理列表、保存文档片段；
+- **运营与编辑**：文案审核、关键词整理、生成分享二维码。
 
-**使用方式**
+**如何使用**
 
-1. 在任意普通网页中选中文本，或直接打开需要处理的页面。
-2. 点击浏览器工具栏中的 TextFlow 图标。
-3. 选择需要的工具，查看结果、复制内容或下载文件。
+1. 安装后，打开 ChatGPT 等 AI 网站或任意网页（可选中文本）；
+2. 点击浏览器工具栏中的 TextFlow 图标；
+3. 选择需要的工具，一键复制、导出或下载结果。
+
+也可以在选中文字后直接点击右键，使用"保存为 Markdown""提取选中纯文本""统计选中字数"等快捷操作。
 
 **权限与隐私说明**
 
-TextFlow 仅请求实现功能所需的 Chrome 扩展权限：
-
-- `activeTab`：在你主动使用扩展时读取当前标签页内容。
-- `storage`：在本地保存语言、工具开关、排序、剪藏和偏好设置。
-- `clipboardWrite`：将处理结果、文本或二维码复制到剪贴板。
-- `contextMenus`：提供选中文本后的右键快捷入口。
-
-核心文本处理、网页剪藏和偏好设置默认保存在你的浏览器本地。扩展不会出售用户数据，也不会用于广告追踪。只有当你主动提交“想要新功能？”建议时，建议内容以及当前页面标题和域名会通过 HTTPS 发送到开发者后端，用于理解需求场景和改进产品。
+TextFlow 仅申请功能所必需的 Chrome 权限（activeTab、storage、clipboardWrite、contextMenus）。核心文本处理、网页剪藏与偏好设置全部保存在你的浏览器本地，不收集浏览历史，不用于广告追踪，不出售用户数据。仅当你主动提交"想要新功能？"建议时，建议内容及当前页面标题、域名会通过 HTTPS 发送至开发者后端，用于改进产品。详见隐私政策。
 
 ---
 
-### English Version (within 5,000 characters)
+### English Version (within 16,000 characters)
 
-**TextFlow** is a Chrome web text toolkit for writers, students, researchers, developers, editors, and everyday browsing. It helps you count, extract, convert, clip, export, clean, and share web text without switching between multiple online tools.
+**TextFlow** is a Chrome extension that combines **AI chat export** with everyday **web text tools**: export conversations from ChatGPT, Gemini, Claude, Grok, and other AI websites to Markdown in one click, plus word count, plain text extraction, web clipping, QR code generation, case conversion, and more. Everything runs locally in your browser — select and go, without uploading your content to any server.
 
-**Key Features**
+🤖 **AI Chat Export — The Efficient Way to Save AI Answers**
+
+Built for ChatGPT, Gemini, Claude, Grok, DeepSeek, Doubao, Kimi, and other AI chat websites. Open an AI conversation, click "Export Markdown," and turn the entire chat into a clean, well-formatted document:
+
+- **Smart conversation detection**: Automatically separates your questions from AI answers and filters out ads, sidebars, suggested prompts, and other clutter;
+- **Formatting preserved**: Headings, lists, tables, code blocks, quotes, and images are converted to standard Markdown, so AI-generated code stays clean and usable;
+- **Full chat or selection**: Export the whole conversation, or select just the turns you care about;
+- **One-click copy or download**: Copy the result to your clipboard, or download a `.md` file ready for Obsidian, Notion, Typora, VS Code, and other tools.
+
+Whether you're saving AI-generated solutions and code, building a prompt library, or archiving research material, there's no more copying and pasting piece by piece.
+
+📝 **Markdown Export (Web to Markdown)**
+Beyond AI websites, any article, document, or tutorial page can be converted to Markdown in one click: export a selection or the full page, switch between source and live preview, copy the source, or download a `.md` file. Great for organizing web material into notes, knowledge bases, blog drafts, or project documentation.
 
 📊 **Word Count**
-Count selected text, manual input, or a full page. View total characters, characters without spaces, Chinese characters, English words, paragraphs, sentences, plus page images, videos, and links.
-
-📝 **Markdown Export**
-Convert selected content or a full page to Markdown. Switch between source and preview, copy Markdown source, or download a `.md` file for notes, documentation, blog drafts, and knowledge bases.
+Count selected text, manual input, or an entire page: total characters, characters without spaces, Chinese characters, English words, paragraphs, and sentences, plus the number of images, videos, and links on the page. Useful for blog and article writing, essays and papers, translation quotes, and content review.
 
 📋 **Plain Text Extractor**
-Extract clean text from a selection, manual input, or the current page. Merge blank lines and optionally keep original URLs after link text.
+Strip away page styling, ads, and hidden characters in one click to get clean plain text; merge consecutive blank lines and optionally keep original URLs after link text. No more messy line breaks and clutter when copying from web pages.
 
 🔖 **Web Clipper**
-Save the current page or selected text with title, source URL, and domain. Add tags and notes, browse recent clips, and export saved clips as Markdown or TXT.
+Save the current page or selected text as a clip, with title, source link, and time recorded automatically; add tags and notes, browse recent clips anytime, and export them in bulk as Markdown or TXT. A lightweight way to collect material and read it later.
 
-📑 **Text Dedup / Sort**
-Process line-based text with deduplication, ascending sort, descending sort, dedup + ascending, dedup + descending, and optional blank-line removal.
+🔤 **Case / Naming Style Converter**
+Uppercase, lowercase, sentence case, and title case, plus one-click conversion between developer naming styles such as camelCase, PascalCase, snake_case, kebab-case, and CONSTANT_CASE.
 
-🔤 **Case Converter**
-Convert text to uppercase, lowercase, sentence case, title case, camelCase, PascalCase, snake_case, kebab-case, or CONSTANT_CASE.
-
-🔄 **Text Reverser**
-Reverse all characters, reverse word order, reverse characters inside words, or create mirrored text.
+📑 **Deduplicate / Sort**
+Deduplicate and sort text line by line — ascending, descending, or combined — with optional blank-line removal. Ideal for cleaning up keyword lists, rosters, link lists, and data snippets.
 
 🔲 **QR Code Generator**
-Generate a QR code from selected text or the current page URL. Copy the QR code or download it as an image.
+Turn the current page URL or any text into a QR code. Copy or download the image, scan it to open on your phone, and share links across devices with ease.
 
-😄 **Emoji Converter**
-Convert text into emoji keywords, regional indicators, circled letters, number emoji, or emoji decorations.
+🔄 **Text Reverser** & 😄 **Emoji Converter**
+Reverse character order, word order, or create mirrored text; convert text into keyword emoji, circled letters, number emoji, and decorative emoji formats — fun for social posts and handy for test data.
 
-**Why Use TextFlow**
+**Why TextFlow**
 
-- **Selection-first workflow**: Select text on a web page, open the extension, and process it immediately.
-- **Common text tools in one place**: Count, extract, convert, clip, export, clean, and share text from a single popup.
-- **Context menu shortcuts**: Right-click selected text to count words, save Markdown, extract plain text, generate QR codes, reverse text, convert emoji, or save a web clip.
-- **Local-first processing**: Core text processing runs in your browser instead of sending content to an online converter.
-- **Customizable tool panel**: Enable, disable, and reorder tools in settings.
-- **Bilingual interface**: Switch between English and Chinese.
+- **AI chat export**: Optimized for ChatGPT, Gemini, Claude, Grok, and other leading AI websites, with clean formatting out of the box;
+- **One extension instead of a pile of online tools**: Count, convert, extract, clip, and share, all in one popup;
+- **Selection-first with context menu shortcuts**: Process text as soon as you select it; right-click for word count, save as Markdown, extract plain text, and more;
+- **Privacy first**: All text processing happens locally in your browser — no uploads, no tracking, no selling user data;
+- **Customizable panel**: Enable or disable tools and drag to reorder them in settings;
+- **Bilingual interface**: Switch between English and Chinese with one click.
 
-**Good For**
+**Who It's For**
 
-- Writers and content creators: count words, collect web material, export Markdown drafts.
-- Students and researchers: clip sources, extract text, organize notes and references.
-- Developers: convert naming styles, clean line-based text, save documentation snippets.
-- Editors and marketers: review web copy, organize keywords, create QR codes for sharing.
-- Everyday users: copy cleaner text and save page links or excerpts quickly.
+- **Heavy AI users**: Save great answers from ChatGPT, Claude, Gemini, and Grok, and build a personal AI knowledge base;
+- **Writers and content creators**: word counting, web material collection, Markdown draft export;
+- **Students and researchers**: clip sources, extract main content, organize citations and notes;
+- **Developers**: export AI code answers, convert naming styles, clean up lists, save documentation snippets;
+- **Marketers and editors**: copy review, keyword organization, shareable QR codes.
 
 **How to Use**
 
-1. Select text on a regular web page, or open the page you want to process.
-2. Click the TextFlow icon in the browser toolbar.
-3. Choose a tool, then copy results or download files as needed.
+1. After installing, open ChatGPT or any website (optionally select some text first);
+2. Click the TextFlow icon in the browser toolbar;
+3. Pick a tool, then copy, export, or download the result in one click.
+
+You can also select text and right-click for shortcuts such as "Save as Markdown," "Extract plain text," and "Count words."
 
 **Permissions and Privacy**
 
-TextFlow requests only the Chrome extension permissions required for its features:
-
-- `activeTab`: read the current tab when you actively use the extension.
-- `storage`: save language, tool settings, order, clips, and preferences locally.
-- `clipboardWrite`: copy processed text, results, or QR codes to the clipboard.
-- `contextMenus`: provide right-click shortcuts for selected text.
-
-Core text processing, web clips, and preferences are stored locally in your browser by default. The extension does not sell user data or use it for ad tracking. If you voluntarily submit a feature suggestion, the suggestion text plus current page title and domain are sent via HTTPS to the developer backend to understand product needs and improve TextFlow.
+TextFlow requests only the Chrome permissions its features require (activeTab, storage, clipboardWrite, contextMenus). All text processing, web clips, and preferences are stored locally in your browser. The extension collects no browsing history, does no ad tracking, and never sells user data. Only when you voluntarily submit a feature suggestion are the suggestion text plus the current page title and domain sent via HTTPS to the developer backend to improve the product. See the privacy policy for details.
 
 ---
 
@@ -316,10 +318,10 @@ This extension strictly complies with:
 ## 4. 关键词标签 (Search Keywords)
 
 ### 中文关键词
-文本工具箱, 字数统计, Markdown导出, 纯文本提取, 网页剪藏, 二维码生成, 大小写转换, 文本反转, 去重排序, Emoji转换, 网页工具, Chrome扩展, 浏览器插件, 文本处理, 内容提取, 写作辅助, 开发者工具, 笔记工具, 网页转Markdown, 字符统计, 文本格式化, 资料整理
+文本工具箱, 字数统计, Markdown导出, ChatGPT导出, ChatGPT转Markdown, AI对话导出, AI聊天记录导出, Claude导出, Gemini导出, Grok导出, DeepSeek导出, AI回答保存, 提示词整理, 纯文本提取, 网页剪藏, 二维码生成, 大小写转换, 驼峰转换, 文本反转, 去重排序, Emoji转换, 网页工具, Chrome扩展, 浏览器插件, 文本处理, 内容提取, 写作辅助, 开发者工具, 笔记工具, 网页转Markdown, 字符统计, 文本格式化, 资料整理
 
 ### English Keywords
-text toolkit, word count, Markdown export, plain text extractor, web clipper, QR code generator, case converter, text reverser, deduplicate sort, emoji converter, browser extension, Chrome extension, text processing, content extraction, writing assistant, developer tools, note taking, web to Markdown, character counter, text formatter, web content tools
+text toolkit, ChatGPT export, ChatGPT to Markdown, export ChatGPT conversation, AI chat export, Claude export, Gemini export, Grok export, DeepSeek export, save AI answers, AI notes, prompt library, word count, Markdown export, plain text extractor, web clipper, QR code generator, case converter, camelCase converter, text reverser, deduplicate sort, emoji converter, browser extension, Chrome extension, text processing, content extraction, writing assistant, developer tools, note taking, web to Markdown, character counter, text formatter, web content tools
 
 ---
 

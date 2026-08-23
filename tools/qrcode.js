@@ -3,12 +3,18 @@ var QRCodeTool = (function () {
 
   var _currentMode = 'selected';
   var _currentData = null;
+  var _manualText = '';
 
   function _(key, fallback) {
     if (typeof I18n !== 'undefined' && I18n.t) {
       return I18n.t(key) || fallback;
     }
     return fallback;
+  }
+
+  // 库默认按 charCode & 0xff 编码，中文会被截成乱码，切换为 UTF-8
+  if (typeof qrcode !== 'undefined' && qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) {
+    qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
   }
 
   function generateQRCode(text) {
@@ -27,7 +33,11 @@ var QRCodeTool = (function () {
         return Promise.reject(new Error(_('tools.qrcode.error_failed', 'QR code generation failed')));
       }
     } catch (e) {
-      return Promise.reject(new Error(_('tools.qrcode.error_failed', 'QR code generation failed: ') + e.message));
+      var msg = (e && e.message) ? e.message : String(e);
+      if (msg.indexOf('code length overflow') !== -1) {
+        msg = _('tools.qrcode.error_too_long', 'Content too long for a QR code');
+      }
+      return Promise.reject(new Error(_('tools.qrcode.error_failed', 'QR code generation failed: ') + msg));
     }
   }
 
@@ -58,9 +68,27 @@ var QRCodeTool = (function () {
     });
   }
 
+  function executeManual(text) {
+    _manualText = text || '';
+    if (!_manualText.trim()) {
+      _currentData = null;
+      return Promise.reject(new Error(_('tools.qrcode.error_empty_input', 'Please enter content first')));
+    }
+    var trimmed = _manualText.trim();
+    var displayText = trimmed.length > 50 ? trimmed.substring(0, 50) + '...' : trimmed;
+    return generateQRCode(trimmed).then(function (qrData) {
+      _currentData = { dataURL: qrData.dataURL, displayText: displayText, mode: 'manual' };
+      return _currentData;
+    });
+  }
+
   function execute(mode) {
     if (typeof mode === 'undefined') mode = _currentMode || 'selected';
     _currentMode = mode;
+
+    if (mode === 'manual') {
+      return executeManual(_manualText);
+    }
 
     if (!TextFlow.isChromeExtension()) {
       return generateQRCode('https://example.com').then(function (qrData) {
@@ -114,6 +142,14 @@ var QRCodeTool = (function () {
     _currentMode = mode;
   }
 
+  function setManualText(text) {
+    _manualText = text || '';
+  }
+
+  function getManualText() {
+    return _manualText;
+  }
+
   function getMode() {
     return _currentMode;
   }
@@ -158,9 +194,12 @@ var QRCodeTool = (function () {
 
   return {
     execute: execute,
+    executeManual: executeManual,
     getResult: getResult,
     setMode: setMode,
     getMode: getMode,
+    setManualText: setManualText,
+    getManualText: getManualText,
     copyQRImageToClipboard: copyQRImageToClipboard,
     downloadFile: downloadFile
   };

@@ -4,7 +4,7 @@
     "description": "Extension name displayed in the Chrome Web Store and browser toolbar"
   },
   "appDesc": {
-    "message": "Web text toolkit for word count, Markdown export, plain text, web clipping, QR codes, case conversion and local text processing.",
+    "message": "Web text toolkit: export AI chats (ChatGPT/Gemini/Claude/Grok) to Markdown, word count, plain text, web clipper, QR codes. Local.",
     "description": "Extension description shown in the Chrome Web Store (max 132 characters)"
   }
 }

@@ -9,7 +9,7 @@
       "description": "Extension name displayed in the Chrome Web Store and browser toolbar"
     },
     "appDesc": {
-      "message": "Web text toolkit for word count, Markdown export, plain text, web clipping, QR codes, case conversion and local text processing.",
+      "message": "Web text toolkit: export AI chats (ChatGPT/Gemini/Claude/Grok) to Markdown, word count, plain text, web clipper, QR codes. Local.",
       "description": "Extension description shown in the Chrome Web Store (max 132 characters)"
     }
   },
@@ -49,16 +49,16 @@
       "desc": "Convert selected content or full page to Markdown, copy or download as .md file",
       "title": "📝 Markdown Export",
       "mode_selected": "Selection",
+      "mode_manual": "Manual Input",
       "mode_full": "Full Page",
       "btn_convert": "Convert",
       "tab_source": "Source",
       "tab_preview": "Preview",
       "btn_copy": "📋 Copy Source",
       "btn_download": "💾 Download .md",
-      "tag_selected": "📄 Selection",
-      "tag_full": "📄 Full Page",
       "status_converting": "Converting…",
       "status_done": "Conversion complete",
+      "status_done_manual": "Conversion complete (Manual)",
       "status_failed": "Conversion failed",
       "status_no_selection": "No selection found. Switch to Full Page to export the page.",
       "error_failed": "Conversion failed",
@@ -71,7 +71,9 @@
       "option_preserve_indent": "Preserve Indentation",
       "option_preserve_indent_desc": "Keep original paragraph indentation",
       "no_selection_title": "No Content Selected",
-      "no_selection_desc": "No selection found. Switch to Full Page to export the page."
+      "no_selection_desc": "No selection found. Switch to Full Page to export the page.",
+      "placeholder_input": "Type or paste content to convert. Rich text / HTML will be converted to Markdown…",
+      "placeholder_manual_empty": "Content typed above will be converted to Markdown…"
     },
     "plaintext": {
       "name": "Plain Text Extractor",
@@ -98,10 +100,12 @@
     },
     "qrcode": {
       "name": "QR Code Generator",
-      "desc": "Generate QR codes from selected text or current page URL",
+      "desc": "Generate QR codes from selected text, current page URL, or your own input",
       "title": "🔲 QR Code Generator",
       "mode_selected": "Selection",
       "mode_full": "Current Page",
+      "mode_manual": "Manual Input",
+      "placeholder_input": "Type or paste content for the QR code…",
       "btn_copy": "📋 Copy QR Code",
       "btn_download": "💾 Download QR Code",
       "status_generating": "Generating QR code…",
@@ -109,6 +113,8 @@
       "status_failed": "QR code generation failed",
       "error_failed": "Generation failed",
       "error_no_selection": "Please select content on the page first",
+      "error_empty_input": "Please enter content for the QR code",
+      "error_too_long": "Content is too long for a QR code",
       "toast_copy_success": "QR code copied to clipboard",
       "toast_copy_failed": "Copy failed",
       "toast_no_content": "Please generate QR code first",

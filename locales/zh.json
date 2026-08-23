@@ -9,7 +9,7 @@
       "description": "扩展名称（Chrome 网上应用店和浏览器工具栏显示）"
     },
     "appDesc": {
-      "message": "网页文本工具箱：字数统计、Markdown导出、纯文本提取、网页剪藏、二维码、大小写转换等工具，本地处理，选中即用。",
+      "message": "网页文本工具箱：AI对话一键导出Markdown（支持ChatGPT/Gemini/Claude/Grok），字数统计、纯文本提取、网页剪藏、二维码，本地处理。",
       "description": "扩展描述（Chrome 网上应用店显示，最多132个字符）"
     }
   },
@@ -49,16 +49,16 @@
       "desc": "将选中内容或整个页面转换为 Markdown，一键复制或下载 .md 文件",
       "title": "📝 导出Markdown",
       "mode_selected": "选中内容",
+      "mode_manual": "手动输入",
       "mode_full": "整个页面",
       "btn_convert": "转换生成",
       "tab_source": "源码",
       "tab_preview": "预览",
       "btn_copy": "📋 复制源码",
       "btn_download": "💾 下载 .md",
-      "tag_selected": "📄 选中内容",
-      "tag_full": "📄 整个页面",
       "status_converting": "正在转换…",
       "status_done": "转换完成",
+      "status_done_manual": "转换完成 (手动)",
       "status_failed": "转换失败",
       "status_no_selection": "当前没有选中内容，可切换为整个页面导出",
       "error_failed": "转换失败",
@@ -71,7 +71,9 @@
       "option_preserve_indent": "保留段首缩进",
       "option_preserve_indent_desc": "保留原文中的段首缩进格式",
       "no_selection_title": "未选中内容",
-      "no_selection_desc": "当前没有选中内容，可切换为整个页面导出。"
+      "no_selection_desc": "当前没有选中内容，可切换为整个页面导出。",
+      "placeholder_input": "请输入或粘贴要转换的内容，粘贴富文本/HTML 将自动转换为 Markdown…",
+      "placeholder_manual_empty": "在上方输入内容后，将自动转换为 Markdown…"
     },
     "plaintext": {
       "name": "纯文本提取",
@@ -98,10 +100,12 @@
     },
     "qrcode": {
       "name": "二维码生成",
-      "desc": "为选中内容或当前页面生成二维码，复制或下载",
+      "desc": "为选中内容、当前页面或手动输入的内容生成二维码，复制或下载",
       "title": "🔲 二维码生成",
       "mode_selected": "选中内容",
       "mode_full": "当前页面",
+      "mode_manual": "手动输入",
+      "placeholder_input": "请输入或粘贴要生成二维码的内容…",
       "btn_copy": "📋 复制二维码",
       "btn_download": "💾 下载二维码",
       "status_generating": "正在生成二维码…",
@@ -109,6 +113,8 @@
       "status_failed": "二维码生成失败",
       "error_failed": "生成失败",
       "error_no_selection": "请先在页面上选中内容",
+      "error_empty_input": "请输入要生成二维码的内容",
+      "error_too_long": "内容过长，超出二维码容量",
       "toast_copy_success": "二维码已复制到剪贴板",
       "toast_copy_failed": "复制失败",
       "toast_no_content": "请先生成二维码",

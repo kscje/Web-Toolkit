@@ -141,7 +141,7 @@ var PlainTextTool = (function () {
             pageURL: data.pageURL,
             mode: data.mode
           };
-          _currentMode = mode;
+          _currentMode = data.mode || mode;
           notifyListeners(_currentData);
           resolve(_currentData);
         });

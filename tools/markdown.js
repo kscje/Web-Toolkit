@@ -4,6 +4,7 @@ var MarkdownTool = (function () {
   var _currentData = null;
   var _currentMode = 'selected';
   var _preserveIndent = false;
+  var _manualText = '';
   var _listeners = [];
 
   function _(key, fallback) {
@@ -280,7 +281,24 @@ var MarkdownTool = (function () {
     return lines.join('\n');
   }
 
+  function looksLikeHTML(text) {
+    var openTag = /<(p|div|span|h[1-6]|ul|ol|li|dl|dd|dt|table|thead|tbody|tr|td|th|blockquote|pre|code|br|hr|strong|em|b|i|u|a|img|figure|figcaption|section|article|header|footer|aside|nav|main|del|s|mark|sup|sub)\b[^>]*>/i;
+    var closeTag = /<\/(p|div|span|h[1-6]|ul|ol|li|dl|dd|dt|table|thead|tbody|tr|td|th|blockquote|pre|code|strong|em|b|i|u|a|figure|figcaption|section|article|header|footer|aside|nav|main|del|s|mark|sup|sub)>/i;
+    return openTag.test(text) || closeTag.test(text);
+  }
+
+  function convertPlainTextToMarkdown(text) {
+    var normalized = String(text || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+    normalized = normalized.replace(/\n{3,}/g, '\n\n');
+    return normalized.trim();
+  }
+
   function execute(mode) {
+    if (mode === 'manual') {
+      return executeManual(_manualText);
+    }
     mode = mode === 'full' ? 'full' : 'selected';
 
     if (!TextFlow.isChromeExtension()) {
@@ -348,6 +366,27 @@ var MarkdownTool = (function () {
     return Promise.resolve(_currentData);
   }
 
+  function executeManual(text) {
+    _manualText = text || '';
+    var markdown = '';
+    if (_manualText.trim()) {
+      markdown = looksLikeHTML(_manualText)
+        ? convertHTMLToMarkdown(_manualText)
+        : convertPlainTextToMarkdown(_manualText);
+    }
+    _currentData = {
+      html: _manualText,
+      markdown: markdown,
+      pageTitle: _('tools.markdown.mode_manual', '手动输入'),
+      pageURL: '',
+      mode: 'manual',
+      isShortContent: false
+    };
+    _currentMode = 'manual';
+    notifyListeners(_currentData);
+    return Promise.resolve(_currentData);
+  }
+
   function getResult() {
     return _currentData;
   }
@@ -368,6 +407,18 @@ var MarkdownTool = (function () {
     return _preserveIndent;
   }
 
+  function setManualText(text) {
+    _manualText = text || '';
+    if (_currentMode === 'manual') {
+      return executeManual(_manualText);
+    }
+    return Promise.resolve(_currentData);
+  }
+
+  function getManualText() {
+    return _manualText;
+  }
+
   function onChange(callback) {
     _listeners.push(callback);
   }
@@ -381,11 +432,14 @@ var MarkdownTool = (function () {
   return {
     execute: execute,
     executeLocal: executeLocal,
+    executeManual: executeManual,
     getResult: getResult,
     setMode: setMode,
     getMode: getMode,
     setPreserveIndent: setPreserveIndent,
     getPreserveIndent: getPreserveIndent,
+    setManualText: setManualText,
+    getManualText: getManualText,
     onChange: onChange,
     convertHTMLToMarkdown: convertHTMLToMarkdown,
     copyToClipboard: TextFlow.copyToClipboard,

@@ -4,8 +4,8 @@
   var FEATURE_BLOCKS = [
     { id: 'wordcount', icon: '📊', color: 'blue', i18nKey: 'settings.feature_wordcount', defaultName: '字数统计' },
     { id: 'plaintext', icon: '📋', color: 'teal', i18nKey: 'settings.feature_plaintext', defaultName: '纯文本提取' },
-    { id: 'textdedup', icon: '📑', color: 'pink', i18nKey: 'settings.feature_textdedup', defaultName: '去重/排序' },
-	    { id: 'markdown', icon: '📝', color: 'purple', i18nKey: 'settings.feature_markdown', defaultName: '导出Markdown' },
+    { id: 'markdown', icon: '📝', color: 'purple', i18nKey: 'settings.feature_markdown', defaultName: '导出Markdown' },
+	    { id: 'textdedup', icon: '📑', color: 'pink', i18nKey: 'settings.feature_textdedup', defaultName: '去重/排序' },
 	    { id: 'caseconverter', icon: '🔤', color: 'green', i18nKey: 'settings.feature_caseconverter', defaultName: '大小写/风格转换' },
 	    { id: 'textreverser', icon: '🔄', color: 'orange', i18nKey: 'settings.feature_textreverser', defaultName: '文本反转' },
 	    { id: 'webclip', icon: '🔖', color: 'blue', i18nKey: 'settings.feature_webclip', defaultName: '网页剪藏' },

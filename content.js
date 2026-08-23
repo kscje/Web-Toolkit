@@ -6,9 +6,13 @@
     'aside', '[role="complementary"]', '.sidebar', '.side',
     'footer', '.footer', '.copyright',
     '[role="dialog"]', '.modal', '.popup', '.overlay',
-    '[class*="ad"]', '[id*="ad"]', '[class*="banner"]',
+    '[class~="ad"]', '[class~="ads"]', '[class^="ad-"]', '[class*=" ad-"]', '[class$="-ad"]',
+    '[id="ad"]', '[id="ads"]', '[id^="ad-"]', '[id$="-ad"]',
+    '[class*="advert"]', '[id*="advert"]', '[class*="adsbygoogle"]', '[id*="adsbygoogle"]',
+    '[class*="banner"]',
     '[class*="comment"]', '[class*="disqus"]', '[class*="discussion"]',
     '[class*="share"]', '[class*="social"]',
+    'model-response-disclaimers', 'hallucination-disclaimer',
     'script', 'style', 'noscript', 'iframe'
   ];
 
@@ -144,24 +148,132 @@
     return analyzeText(text);
   }
 
-  function findConversationContainer() {
-    let turns = document.querySelectorAll('article[data-testid^="conversation-turn"]');
-    if (turns.length < 2) {
-      turns = document.querySelectorAll('article');
-    }
-    if (turns.length < 2) return null;
+  const CONVERSATION_TURN_SELECTOR = [
+    '[data-testid^="conversation-turn-"]',
+    'article[data-testid^="conversation-turn"]',
+    'user-query',
+    'model-response'
+  ].join(', ');
 
-    const parent = turns[0].parentElement;
-    if (!parent) return null;
-
-    let contained = 0;
-    turns.forEach(function (t) {
-      if (parent.contains(t)) contained++;
+  function filterOutermostTurns(turns, selector) {
+    return turns.filter(function (el) {
+      let parent = el.parentElement;
+      while (parent && parent !== document.body) {
+        try {
+          if (parent.matches(selector)) return false;
+        } catch (e) {}
+        parent = parent.parentElement;
+      }
+      return true;
     });
-    if (contained !== turns.length) return null;
-    if (parent.textContent.trim().length <= 100) return null;
+  }
 
-    return parent;
+  function getConversationTurns() {
+    let turns = [];
+    try {
+      turns = Array.from(document.querySelectorAll(CONVERSATION_TURN_SELECTOR));
+    } catch (e) {}
+
+    if (turns.length > 0) {
+      return { elements: filterOutermostTurns(turns, CONVERSATION_TURN_SELECTOR), minLength: 1 };
+    }
+
+    const messages = document.querySelectorAll('[data-message-author-role]');
+    if (messages.length >= 2) {
+      return { elements: Array.from(messages), minLength: 1 };
+    }
+
+    const secondarySelectors = ['[data-message-id]', '.ds-message'];
+    for (let i = 0; i < secondarySelectors.length; i++) {
+      let candidates = [];
+      try {
+        candidates = Array.from(document.querySelectorAll(secondarySelectors[i]));
+      } catch (e) {}
+      if (candidates.length >= 2) {
+        return { elements: filterOutermostTurns(candidates, secondarySelectors[i]), minLength: 100 };
+      }
+    }
+
+    const articles = document.querySelectorAll('article');
+    if (articles.length >= 2) {
+      return { elements: Array.from(articles), minLength: 100 };
+    }
+
+    return null;
+  }
+
+  function findCommonAncestor(elements) {
+    if (!elements || elements.length === 0) return null;
+
+    const path = [];
+    let node = elements[0];
+    while (node && node !== document.body) {
+      path.push(node);
+      node = node.parentElement;
+    }
+    const inPath = new Set(path);
+
+    for (let i = 1; i < elements.length; i++) {
+      let current = elements[i];
+      let shared = null;
+      while (current && current !== document.body) {
+        if (inPath.has(current)) { shared = current; break; }
+        current = current.parentElement;
+      }
+      if (!shared) return null;
+      path.length = path.indexOf(shared) + 1;
+      inPath.clear();
+      path.forEach(function (p) { inPath.add(p); });
+    }
+    return path[path.length - 1];
+  }
+
+  function findConversationContainer() {
+    const turns = getConversationTurns();
+    if (!turns || turns.elements.length === 0) return null;
+
+    const container = findCommonAncestor(turns.elements);
+    if (!container || container === document.body) return null;
+
+    const textLength = (container.textContent || '').trim().length;
+    if (textLength <= (turns.minLength || 100)) return null;
+
+    return container;
+  }
+
+  function paragraphTextLength(el) {
+    let len = 0;
+    el.querySelectorAll('p').forEach(function (p) {
+      len += (p.textContent || '').trim().length;
+    });
+    return len;
+  }
+
+  function linkTextLength(el) {
+    let len = 0;
+    el.querySelectorAll('a').forEach(function (a) {
+      len += (a.textContent || '').trim().length;
+    });
+    return len;
+  }
+
+  function pickArticleBody(candidates) {
+    let bestBody = null;
+    let bestParagraphLength = 0;
+    candidates.forEach(function (el) {
+      if (el === document.body || el === document.documentElement) return;
+      const total = (el.textContent || '').trim().length;
+      if (total < 200) return;
+      const paragraphLength = paragraphTextLength(el);
+      if (paragraphLength < 150) return;
+      if (paragraphLength / total <= 0.55) return;
+      if (linkTextLength(el) / total > 0.3) return;
+      if (paragraphLength > bestParagraphLength) {
+        bestBody = el;
+        bestParagraphLength = paragraphLength;
+      }
+    });
+    return bestBody;
   }
 
   function getPageMainContentHTML() {
@@ -177,12 +289,14 @@
     }
 
     const selectors = ['article', 'main', '[role="main"]', '.post-content', '.article-content', '.entry-content', '#content', '.content'];
+    const candidates = [];
     let best = null;
     let bestLength = 0;
     for (let i = 0; i < selectors.length; i++) {
       const matches = document.querySelectorAll(selectors[i]);
       matches.forEach(function (el) {
         if (!isElementVisible(el)) return;
+        candidates.push(el);
         const textLength = (el.textContent || '').trim().length;
         if (textLength > bestLength) {
           best = el;
@@ -195,6 +309,7 @@
       const blockCandidates = document.querySelectorAll('article, main, section, [role="main"], div');
       blockCandidates.forEach(function (el) {
         if (!isElementVisible(el)) return;
+        candidates.push(el);
         const textLength = (el.textContent || '').trim().length;
         if (textLength > bestLength && textLength < (document.body.textContent || '').length * 0.95) {
           best = el;
@@ -203,8 +318,10 @@
       });
     }
 
-    if (best && bestLength >= 100) {
-      const clone = best.cloneNode(true);
+    const articleBody = pickArticleBody(candidates);
+    const target = articleBody || (best && bestLength >= 100 ? best : null);
+    if (target) {
+      const clone = target.cloneNode(true);
       removeFilteredContent(clone);
       return clone.innerHTML;
     }

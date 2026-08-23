@@ -25,13 +25,13 @@
             <div class="card-icon teal">📋</div>
             <div class="card-name" data-i18n="tools.plaintext.name">纯文本提取</div>
           </div>
-          <div class="tool-card textdedup" data-tool="textdedup" id="cardTextDedup">
-            <div class="card-icon pink">📑</div>
-            <div class="card-name" data-i18n="tools.textdedup.name">去重/排序</div>
-          </div>
           <div class="tool-card markdown" data-tool="markdown" id="cardMarkdown">
             <div class="card-icon purple">📝</div>
             <div class="card-name" data-i18n="tools.markdown.name">导出Markdown</div>
+          </div>
+          <div class="tool-card textdedup" data-tool="textdedup" id="cardTextDedup">
+            <div class="card-icon pink">📑</div>
+            <div class="card-name" data-i18n="tools.textdedup.name">去重/排序</div>
           </div>
           <div class="tool-card caseconverter" data-tool="caseconverter" id="cardCaseConverter">
             <div class="card-icon green">🔤</div>
@@ -163,9 +163,9 @@
 	          </label>
 	        </div>
 
-	        <div class="webclip-action-row">
-	          <button class="export-btn primary" id="btnSaveWebClip" data-i18n="tools.webclip.btn_save">保存剪藏</button>
-	        </div>
+        <div class="action-bar">
+          <button class="export-btn primary" id="btnSaveWebClip" data-i18n="tools.webclip.btn_save">保存剪藏</button>
+        </div>
 
 	        <div class="section-label" data-i18n="tools.webclip.recent_title">最近剪藏</div>
 	        <div class="webclip-list" id="webClipList"></div>
@@ -238,7 +238,13 @@
 
         <div class="mode-pills">
           <button class="mode-pill active" data-mode="selected" data-i18n="tools.markdown.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.markdown.mode_manual">手动输入</button>
           <button class="mode-pill" data-mode="full" data-i18n="tools.markdown.mode_full">整个页面</button>
+        </div>
+
+        <div class="manual-input-panel" id="mdManualPanel" style="display:none;">
+          <textarea id="mdManualInput" data-i18n-placeholder="tools.markdown.placeholder_input" placeholder="请输入或粘贴要转换的内容…"></textarea>
+          <div class="manual-char-count" id="mdManualCharCount">0</div>
         </div>
 
         <div class="toggle-row">
@@ -261,8 +267,6 @@
         </div>
 
         <div class="result-area show" id="mdResultArea">
-          <div class="markdown-source-tag" id="mdSourceTag" data-i18n="tools.markdown.tag_selected">📄 选中内容</div>
-
           <div class="preview-panel">
             <div class="preview-header">
               <button class="preview-tab active" data-tab="source" data-i18n="tools.markdown.tab_source">源码</button>
@@ -282,7 +286,13 @@
 
         <div class="mode-pills">
           <button class="mode-pill active" data-mode="selected" data-i18n="tools.qrcode.mode_selected">选中内容</button>
+          <button class="mode-pill" data-mode="manual" data-i18n="tools.qrcode.mode_manual">手动输入</button>
           <button class="mode-pill" data-mode="full" data-i18n="tools.qrcode.mode_full">当前页面</button>
+        </div>
+
+        <div class="manual-input-panel" id="qrManualPanel" style="display:none;">
+          <textarea id="qrManualInput" data-i18n-placeholder="tools.qrcode.placeholder_input" placeholder="请输入或粘贴要生成二维码的内容…" maxlength="1000"></textarea>
+          <div class="manual-char-count" id="qrManualCharCount">0</div>
         </div>
 
         <div class="result-area show" id="qrResultArea">

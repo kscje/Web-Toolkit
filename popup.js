@@ -94,7 +94,9 @@
     dom.mdResultArea = $('#mdResultArea');
     dom.mdPreview = $('#mdPreview');
     dom.mdNoSelectionBanner = $('#mdNoSelectionBanner');
-    dom.mdSourceTag = $('#mdSourceTag');
+    dom.mdManualPanel = $('#mdManualPanel');
+    dom.mdManualInput = $('#mdManualInput');
+    dom.mdManualCharCount = $('#mdManualCharCount');
     dom.ptResultArea = $('#ptResultArea');
     dom.ptPreview = $('#ptPreview');
     dom.ptManualPanel = $('#ptManualPanel');
@@ -112,6 +114,10 @@
     dom.qrImage = $('#qrImage');
     dom.btnCopyQR = $('#btnCopyQR');
     dom.btnDownloadQR = $('#btnDownloadQR');
+    dom.qrResultArea = $('#qrResultArea');
+    dom.qrManualPanel = $('#qrManualPanel');
+    dom.qrManualInput = $('#qrManualInput');
+    dom.qrManualCharCount = $('#qrManualCharCount');
     dom.cardCaseConverter = $('#cardCaseConverter');
     dom.ccInputArea = $('#ccInputArea');
     dom.ccManualInput = $('#ccManualInput');
@@ -321,6 +327,7 @@
     $('#cardMarkdown').addEventListener('click', function () {
       showView('markdown');
       document.querySelector('#viewMarkdown .mode-pill[data-mode="selected"]').classList.add('active');
+      document.querySelector('#viewMarkdown .mode-pill[data-mode="manual"]').classList.remove('active');
       document.querySelector('#viewMarkdown .mode-pill[data-mode="full"]').classList.remove('active');
       mdMode = 'selected';
 
@@ -343,14 +350,14 @@
         $('#ptMergeLinesToggle').checked = true;
         $('#ptKeepURLsToggle').checked = false;
         plainTextViewInit();
-        executePlainTextExtract();
       });
     });
 
     dom.cardQRCode.addEventListener('click', function () {
       showView('qrcode');
-      document.querySelector('#viewQRCode .mode-pill[data-mode="selected"]').classList.add('active');
-      document.querySelector('#viewQRCode .mode-pill[data-mode="full"]').classList.remove('active');
+      $$('#viewQRCode .mode-pill').forEach(function (p) {
+        p.classList.toggle('active', p.dataset.mode === 'selected');
+      });
 
       ensureModule('qrcode').then(function () {
         QRCodeTool.setMode('selected');
@@ -495,9 +502,21 @@
   }
 
   var _mdEventsBound = false;
+  function updateMarkdownManualPanel() {
+    if (!dom.mdManualPanel) return;
+    dom.mdManualPanel.style.display = mdMode === 'manual' ? '' : 'none';
+    if (dom.mdManualCharCount && dom.mdManualInput) {
+      dom.mdManualCharCount.textContent = String(dom.mdManualInput.value.length);
+    }
+    if (mdMode === 'manual' && dom.mdManualInput) {
+      dom.mdManualInput.focus();
+    }
+  }
+
   function markdownViewInit() {
     MarkdownTool.setPreserveIndent(false);
     $('#mdPreserveIndentToggle').checked = false;
+    updateMarkdownManualPanel();
 
     if (!_mdEventsBound) {
       _mdEventsBound = true;
@@ -508,24 +527,9 @@
           $$('#viewMarkdown .mode-pill').forEach(function (p) { p.classList.remove('active'); });
           pill.classList.add('active');
           mdMode = pill.dataset.mode || 'selected';
-          checkSelectionAndExecute();
-        });
-      });
-
-      $('#mdPreserveIndentToggle').addEventListener('change', function () {
-        MarkdownTool.setPreserveIndent(this.checked);
-        if (mdMode === 'full' || dom.mdNoSelectionBanner.style.display === 'none') {
-          executeMarkdown();
-        }
-      });
-
-      $$('#viewMarkdown .mode-pill').forEach(function (pill) {
-        pill.addEventListener('click', function () {
-          $$('#viewMarkdown .mode-pill').forEach(function (p) { p.classList.remove('active'); });
-          pill.classList.add('active');
-          mdMode = pill.dataset.mode;
           MarkdownTool.setMode(mdMode);
-          if (mdMode === 'full') {
+          updateMarkdownManualPanel();
+          if (mdMode === 'manual' || mdMode === 'full') {
             dom.mdNoSelectionBanner.style.display = 'none';
             dom.mdResultArea.classList.add('show');
             executeMarkdown();
@@ -533,6 +537,37 @@
             checkSelectionAndExecute(false);
           }
         });
+      });
+
+      if (dom.mdManualInput) {
+        dom.mdManualInput.addEventListener('input', function () {
+          updateMarkdownManualPanel();
+          if (mdMode !== 'manual') return;
+          executeMarkdown();
+        });
+
+        dom.mdManualInput.addEventListener('paste', function (e) {
+          if (mdMode !== 'manual') return;
+          var html = '';
+          try {
+            html = e.clipboardData ? e.clipboardData.getData('text/html') : '';
+          } catch (err) {
+            html = '';
+          }
+          if (!html || !/<[a-z][^>]*>/i.test(html)) return;
+          e.preventDefault();
+          var markdown = MarkdownTool.convertHTMLToMarkdown(html);
+          insertTextAtInputCursor(this, markdown);
+          updateMarkdownManualPanel();
+          executeMarkdown();
+        });
+      }
+
+      $('#mdPreserveIndentToggle').addEventListener('change', function () {
+        MarkdownTool.setPreserveIndent(this.checked);
+        if (mdMode === 'manual' || mdMode === 'full' || dom.mdNoSelectionBanner.style.display === 'none') {
+          executeMarkdown();
+        }
       });
 
       $$('#viewMarkdown .preview-tab').forEach(function (tab) {
@@ -543,7 +578,11 @@
           if (!data) return;
           var tabType = tab.dataset.tab;
           if (tabType === 'source') {
-            dom.mdPreview.textContent = data.markdown;
+            if (data.mode === 'manual' && !data.markdown) {
+              dom.mdPreview.textContent = I18n.t('tools.markdown.placeholder_manual_empty');
+            } else {
+              dom.mdPreview.textContent = data.markdown;
+            }
             dom.mdPreview.classList.remove('rendered');
           } else {
             dom.mdPreview.innerHTML = markedPreview(data.markdown);
@@ -592,18 +631,33 @@
       return html;
     }
 
+    function insertTextAtInputCursor(el, text) {
+      var start = el.selectionStart;
+      var end = el.selectionEnd;
+      el.value = el.value.slice(0, start) + text + el.value.slice(end);
+      var pos = start + text.length;
+      el.setSelectionRange(pos, pos);
+    }
+
     function executeMarkdown() {
       setStatus(I18n.t('tools.markdown.status_converting'));
 
-      MarkdownTool.execute(mdMode).then(function (data) {
-        dom.mdPreview.textContent = data.markdown;
+      var run = mdMode === 'manual'
+        ? MarkdownTool.executeManual(dom.mdManualInput ? dom.mdManualInput.value : '')
+        : MarkdownTool.execute(mdMode);
+
+      run.then(function (data) {
+        if (data.mode === 'manual' && !data.markdown) {
+          dom.mdPreview.textContent = I18n.t('tools.markdown.placeholder_manual_empty');
+        } else {
+          dom.mdPreview.textContent = data.markdown;
+        }
         dom.mdPreview.classList.remove('rendered');
-        updateMarkdownSourceTag(data.mode === 'full' ? 'full' : mdMode);
 
         $('#viewMarkdown .preview-tab[data-tab="source"]').classList.add('active');
         $('#viewMarkdown .preview-tab[data-tab="rendered"]').classList.remove('active');
 
-        setStatus(I18n.t('tools.markdown.status_done'));
+        setStatus(I18n.t(data.mode === 'manual' ? 'tools.markdown.status_done_manual' : 'tools.markdown.status_done'));
         if (data.isShortContent) {
           showToast(I18n.t('tools.markdown.toast_short_content'));
         }
@@ -621,16 +675,10 @@
       });
     }
 
-    function updateMarkdownSourceTag(mode) {
-      if (!dom.mdSourceTag) return;
-      var key = mode === 'full' ? 'tools.markdown.tag_full' : 'tools.markdown.tag_selected';
-      dom.mdSourceTag.textContent = I18n.t(key);
-    }
-
     function checkSelectionAndExecute(allowAutoFull) {
       allowAutoFull = allowAutoFull !== false;
 
-      if (mdMode === 'full') {
+      if (mdMode === 'manual' || mdMode === 'full') {
         dom.mdNoSelectionBanner.style.display = 'none';
         dom.mdResultArea.classList.add('show');
         executeMarkdown();
@@ -695,6 +743,10 @@
       : PlainTextTool.execute(ptMode);
 
     run.then(function (data) {
+      // 无选中内容时内容脚本会回退为整页提取，同步模式按钮与实际来源一致
+      if (data.mode === 'full' && ptMode === 'selected') {
+        setPlainTextMode('full');
+      }
       dom.ptPreview.textContent = data.text || '';
       dom.ptPreview.classList.add('has-content');
       setStatus(I18n.t('tools.plaintext.status_done'));
@@ -702,6 +754,15 @@
       showToast(I18n.t('tools.plaintext.status_failed') + ': ' + err.message);
       setStatus(I18n.t('tools.plaintext.status_failed'));
     });
+  }
+
+  function setPlainTextMode(mode) {
+    ptMode = mode;
+    PlainTextTool.setMode(ptMode);
+    $$('#viewPlainText .mode-pill').forEach(function (pill) {
+      pill.classList.toggle('active', pill.dataset.mode === ptMode);
+    });
+    updatePlainTextManualPanel();
   }
 
   var _ptEventsBound = false;
@@ -780,6 +841,7 @@
     QRCodeTool.execute().then(function (data) {
       dom.qrContentText.textContent = data.displayText;
       dom.qrImage.src = data.dataURL;
+      if (dom.qrResultArea) dom.qrResultArea.classList.add('show');
       setStatus(I18n.t('tools.qrcode.status_done'));
     }).catch(function (err) {
       showToast(I18n.t('tools.qrcode.error_failed') + ': ' + err.message);
@@ -787,20 +849,64 @@
     });
   }
 
+  function updateQRManualPanel() {
+    if (!dom.qrManualPanel) return;
+    var isManual = QRCodeTool.getMode() === 'manual';
+    dom.qrManualPanel.style.display = isManual ? '' : 'none';
+    if (dom.qrManualCharCount && dom.qrManualInput) {
+      dom.qrManualCharCount.textContent = String(dom.qrManualInput.value.length);
+    }
+    if (isManual && dom.qrManualInput) {
+      dom.qrManualInput.focus();
+    }
+  }
+
+  function clearQRResult() {
+    if (dom.qrResultArea) dom.qrResultArea.classList.remove('show');
+    dom.qrImage.removeAttribute('src');
+    dom.qrContentText.textContent = '';
+  }
+
+  function executeQRCodeManual() {
+    var text = dom.qrManualInput ? dom.qrManualInput.value : '';
+    QRCodeTool.setManualText(text);
+    if (!text.trim()) {
+      clearQRResult();
+      setStatus(I18n.t('app.status_ready'));
+      return;
+    }
+    executeQRCode();
+  }
+
 	  var _qrEventsBound = false;
 	  function qrCodeViewInit() {
-    if (!_qrEventsBound) {
-      _qrEventsBound = true;
-      $$('#viewQRCode .mode-pill').forEach(function (pill) {
-        pill.addEventListener('click', function () {
-          $$('#viewQRCode .mode-pill').forEach(function (p) { p.classList.remove('active'); });
-          pill.classList.add('active');
-          QRCodeTool.setMode(pill.dataset.mode);
-          executeQRCode();
-        });
-      });
+	    if (!_qrEventsBound) {
+	      _qrEventsBound = true;
+	      $$('#viewQRCode .mode-pill').forEach(function (pill) {
+	        pill.addEventListener('click', function () {
+	          $$('#viewQRCode .mode-pill').forEach(function (p) { p.classList.remove('active'); });
+	          pill.classList.add('active');
+	          QRCodeTool.setMode(pill.dataset.mode);
+	          updateQRManualPanel();
+	          if (pill.dataset.mode === 'manual') {
+	            executeQRCodeManual();
+	          } else {
+	            executeQRCode();
+	          }
+	        });
+	      });
 
-      dom.btnCopyQR.addEventListener('click', function () {
+	      if (dom.qrManualInput) {
+	        dom.qrManualInput.addEventListener('input', function () {
+	          if (QRCodeTool.getMode() !== 'manual') return;
+	          if (dom.qrManualCharCount) {
+	            dom.qrManualCharCount.textContent = String(this.value.length);
+	          }
+	          executeQRCodeManual();
+	        });
+	      }
+
+	      dom.btnCopyQR.addEventListener('click', function () {
         QRCodeTool.copyQRImageToClipboard().then(function () {
           showToast(I18n.t('tools.qrcode.toast_copy_success'));
         }).catch(function () {
@@ -821,7 +927,12 @@
       });
     }
 
-	    executeQRCode();
+	    updateQRManualPanel();
+	    if (QRCodeTool.getMode() === 'manual') {
+	      executeQRCodeManual();
+	    } else {
+	      executeQRCode();
+	    }
 	  }
 
 	  var _webClipEventsBound = false;
@@ -1410,7 +1521,7 @@
         _selectionCache.text = resp.data.text || '';
         _selectionCache.html = resp.data.html || '';
         if (_selectionCache.hasSelection) {
-          showToast(I18n.t('status.selection_detected'));
+          setStatus(I18n.t('status.selection_detected'));
         }
       }
     }).catch(function () {});
